@@ -691,6 +691,9 @@ async function onReady(){
   screen("booting");bootMsg("Opening your Saved Messages…");
   me=await client.send({"@type":"getMe"});paintMe();
   savedChatId=(await client.send({"@type":"createPrivateChat",user_id:me.id,force:true})).id;
+  // keep TDLib's on-device media cache bounded, since small files are now kept
+  client.send({"@type":"optimizeStorage",size:512*1024*1024,ttl:0,count:0,immunity_delay:0,
+    file_types:[],chat_ids:[],exclude_chat_ids:[],return_deleted_file_statistics:false,chat_limit:0}).catch(()=>{});
   const cached=lsGet(IDX_LS);
   if(cached&&Array.isArray(cached.files))idx=normalize(cached);
   screen("scrVault");render();
@@ -749,10 +752,14 @@ $("logoutBtn").onclick=async()=>{
 };
 
 /* ========================== transfer plumbing ========================= */
-const watchers=new Map();
-const watchFile=(id,cb)=>watchers.set(id,cb);
+const watchers=new Map();                     // file id -> Set of callbacks
+function watchFile(id,cb){
+  let s=watchers.get(id); if(!s){s=new Set();watchers.set(id,s)}
+  s.add(cb);
+  return ()=>{s.delete(cb); if(!s.size)watchers.delete(id)};
+}
 const unwatchFile=(id)=>watchers.delete(id);
-function fileTick(f){const cb=watchers.get(f.id);if(cb){try{cb(f)}catch(_){}}}
+function fileTick(f){const s=watchers.get(f.id);if(s)for(const cb of [...s]){try{cb(f)}catch(_){}}}
 const sends=new Map();
 const waitSend=(t)=>new Promise((res,rej)=>sends.set(t,{res,rej}));
 function sendResolve(o,m){const h=sends.get(o);if(h){sends.delete(o);h.res(m)}}
@@ -776,17 +783,60 @@ async function readOut(fileId,size,sink){
   if(!r||!r.data)throw new Error("TDLib downloaded the file but handed back no data.");
   await sink(r.data);
 }
-async function pullFile(rec,onProg,sink){
-  const f=await client.send({"@type":"getRemoteFile",remote_file_id:rec.remoteId,file_type:{"@type":"fileTypeDocument"}});
-  const fileId=f.id;
-  if(onProg)watchFile(fileId,fo=>{const d=(fo.local&&fo.local.downloaded_size)||0;onProg(d/Math.max(1,rec.size))});
+const KEEP_LOCAL_UNDER=64*1024*1024;   // keep TDLib's copy of small media so re-opening is instant
+let STALL_MS=45000;
+const busy=new Set();                  // remote ids currently being fetched
+
+async function pullFile(rec,onProg,sink,opts){
+  opts=opts||{};
+  const key=rec.remoteId;
+  if(key&&busy.has(key))throw new Error("That file is already being fetched. Wait for it to finish.");
+  if(key)busy.add(key);
+  let fileId=null,un=null,stall=null,ok=false;
   try{
-    await client.send({"@type":"downloadFile",file_id:fileId,priority:1,offset:0,limit:0,synchronous:true});
-    unwatchFile(fileId);
-    await readOut(fileId,rec.size,sink);
+    let f=await client.send({"@type":"getRemoteFile",remote_file_id:rec.remoteId,file_type:{"@type":"fileTypeDocument"}});
+    fileId=f.id;
+    if(opts.onStart)opts.onStart(fileId);
+    const total=rec.size||f.size||0;
+
+    if(!(f.local&&f.local.is_downloading_completed)){
+      let last=Date.now(),got=0;
+      un=watchFile(fileId,fo=>{
+        const d=(fo.local&&fo.local.downloaded_size)||0;
+        if(d>got){got=d;last=Date.now()}
+        if(onProg)onProg(d/Math.max(1,total),d);
+      });
+      const stalled=new Promise((_,rej)=>{
+        stall=setInterval(()=>{
+          if(Date.now()-last>STALL_MS)rej(new Error(got
+            ? "Telegram stopped sending data partway through. Try again."
+            : "Telegram never started sending this file. Check your connection and try again."));
+        },2000);
+      });
+      // priority 32 is the HIGHEST. The old value of 1 was the lowest, which
+      // parked every user-initiated download behind TDLib's own background work.
+      f=await Promise.race([
+        client.send({"@type":"downloadFile",file_id:fileId,priority:32,offset:0,limit:0,synchronous:true}),
+        stalled
+      ]);
+      // synchronous:true also resolves on failure and cancellation, so confirm.
+      if(!(f&&f.local&&f.local.is_downloading_completed))
+        throw new Error("The download stopped before it finished. Try again.");
+    }
+    if(onProg)onProg(1,total);
+    if(un){un();un=null}
+    await readOut(fileId,total,sink);
+    ok=true;
   } finally {
-    unwatchFile(fileId);
-    try{ await client.send({"@type":"deleteFile",file_id:fileId}); }catch(_){}
+    if(stall)clearInterval(stall);
+    if(un)un();
+    if(key)busy.delete(key);
+    if(fileId!=null){
+      if(!ok){ try{ await client.send({"@type":"cancelDownloadFile",file_id:fileId,only_if_pending:false}) }catch(_){} }
+      if((rec.size||0)>KEEP_LOCAL_UNDER){
+        try{ await client.send({"@type":"deleteFile",file_id:fileId}) }catch(_){}
+      }
+    }
   }
 }
 function saveBlob(blob,name){
@@ -876,7 +926,7 @@ function queueDownload(rec){
         }catch(e){ if(e&&e.name==="AbortError"){row.el.remove();tHead();return} writable=null; }
       }
       const parts=[];
-      await pullFile(rec,p=>row.set(p,`${fmt(p*rec.size)} of ${fmt(rec.size)}`),
+      await pullFile(rec,(pct,bytes)=>row.set(pct,bytes?`${fmt(bytes)} of ${fmt(rec.size)}`:"Waiting for Telegram…"),
         async b=>{ if(writable)await writable.write(b); else parts.push(b); });
       if(writable){await writable.close();writable=null}
       else saveBlob(new Blob(parts,{type:rec.mime}),rec.name);
@@ -979,13 +1029,20 @@ async function deleteRecords(recs,quiet){
 }
 
 /* =============================== preview ============================== */
-let pvList=[],pvIdx=-1;
+let pvList=[],pvIdx=-1,pvFileId=null,pvRun=0;
 const pvCache=new Map();
+function cancelPv(){
+  if(pvFileId!=null&&client){
+    const id=pvFileId;pvFileId=null;
+    client.send({"@type":"cancelDownloadFile",file_id:id,only_if_pending:false}).catch(()=>{});
+  }
+}
 function pvPut(id,url){
   pvCache.set(id,url);
   while(pvCache.size>3){const k=pvCache.keys().next().value;URL.revokeObjectURL(pvCache.get(k));pvCache.delete(k)}
 }
 function closePreview(){
+  pvRun++;cancelPv();
   $("pv").hidden=true;$("pvBody").innerHTML="";
   document.documentElement.style.overflow="";
   pvList=[];pvIdx=-1;
@@ -999,7 +1056,7 @@ function openPreview(rec){
   document.documentElement.style.overflow="hidden";
   showPreview();
 }
-function pvStep(d){ if(pvList.length<2)return; pvIdx=(pvIdx+d+pvList.length)%pvList.length; showPreview(); }
+function pvStep(d){ if(pvList.length<2)return; pvRun++;cancelPv(); pvIdx=(pvIdx+d+pvList.length)%pvList.length; showPreview(); }
 function noPreview(rec,msg,sub){
   return `<div class="pv-msg">${plainIco(kindOf(rec),"")}
     <p>${esc(msg)}</p><small>${esc(sub||fmt(rec.size))}</small>
@@ -1013,6 +1070,8 @@ async function showPreview(){
   const wire=()=>body.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
     if(b.dataset.a==="dl"){queueDownload(rec);closePreview()}
     if(b.dataset.a==="go"){showPreview.force=rec.id;showPreview()}
+    if(b.dataset.a==="cancel"){closePreview()}
+    if(b.dataset.a==="retry"){showPreview()}
   });
 
   if(!CAN_PREVIEW[kind]){ body.innerHTML=noPreview(rec,"No preview for this file type"); wire(); return; }
@@ -1027,17 +1086,33 @@ async function showPreview(){
   const cached=pvCache.get(rec.id);
   let url=cached;
   if(!url){
-    body.innerHTML=`<div class="pv-msg"><p>Loading…</p><small>${esc(fmt(rec.size))}</small><div class="pvbar"><i id="pvbar"></i></div></div>`;
-    const token=rec.id;showPreview.token=token;
+    body.innerHTML=`<div class="pv-msg">
+      <p id="pvStat">Asking Telegram for this file…</p>
+      <small>${esc(fmt(rec.size))}</small>
+      <div class="pvbar"><i id="pvbar"></i></div>
+      <div style="margin-top:18px"><button class="pv-btn alt" data-a="cancel">Cancel</button></div>
+    </div>`;
+    wire();
+    const run=++pvRun;
     try{
       const parts=[];
-      await pullFile(rec,p=>{const el=$("pvbar");if(el)el.style.width=(p*100)+"%"},async b=>parts.push(b));
-      if(showPreview.token!==token||$("pv").hidden)return;
+      await pullFile(rec,(pct,bytes)=>{
+        if(pvRun!==run)return;
+        const bar=$("pvbar");if(bar)bar.style.width=(pct*100)+"%";
+        const st=$("pvStat");
+        if(st)st.textContent=bytes?`Downloading ${fmt(bytes)} of ${fmt(rec.size)}`:"Asking Telegram for this file…";
+      },async b=>parts.push(b),{onStart:id=>{if(pvRun===run)pvFileId=id}});
+      if(pvRun!==run||$("pv").hidden)return;
+      pvFileId=null;
       url=URL.createObjectURL(new Blob(parts,{type:rec.mime||""}));
       pvPut(rec.id,url);
     }catch(e){
-      if(showPreview.token!==token)return;
-      body.innerHTML=noPreview(rec,"Couldn't load this file",errText(e));wire();return;
+      if(pvRun!==run||$("pv").hidden)return;
+      pvFileId=null;
+      body.innerHTML=noPreview(rec,"Couldn't load this file",errText(e))
+        .replace('<div><button class="pv-btn" data-a="dl">Download</button></div>',
+                 '<div><button class="pv-btn" data-a="retry">Try again</button><button class="pv-btn alt" data-a="dl">Download</button></div>');
+      wire();return;
     }
   }
   const fail=()=>{body.innerHTML=noPreview(rec,"Your browser can't play this format");wire()};
@@ -1352,6 +1427,8 @@ window.__vault={
   upload:queueUpload,download:queueDownload,openPreview,closePreview,pvStep,
   saveIndex,loadIndex,render,createFolder,
   setBigPreview(n){BIG_PREVIEW=n},
+  setStallMs(n){STALL_MS=n},
+  pull:pullFile,
   drain:async()=>{for(let i=0;i<900&&(queue.length||running);i++)await sleep(50)}
 };
 })();
