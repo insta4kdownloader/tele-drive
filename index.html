@@ -8,1242 +8,1297 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Vault">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#EDF1F5">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D131A">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafd">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131314">
 <meta name="referrer" content="no-referrer">
 <style>
 :root{
-  --paper:#EDF1F5; --card:#FFFFFF; --sunk:#E3EAF1;
-  --ink:#111A24; --ink-2:#33465A; --muted:#5F7186;
-  --line:#D2DDE7; --line-soft:#E4EBF2;
-  --accent:#1A87BE; --accent-ink:#0F5F87; --accent-soft:#DEEDF6;
-  --warn:#8A560F; --warn-soft:#F6EBD9; --warn-line:#E8D3AE;
-  --ok:#1F7A57; --ok-soft:#DDEFE7;
-  --danger:#9C2D26; --danger-soft:#F7E3E1;
-  --on-accent:#FFFFFF;
-  --shadow:0 1px 2px rgba(17,26,36,.06), 0 10px 26px -18px rgba(17,26,36,.30);
-  --radius:9px;
+  --bg:#f8fafd; --surface:#ffffff; --surface-2:#f0f4f9; --hover:#f2f6fc;
+  --text:#1f1f1f; --text-2:#444746; --muted:#5f6368;
+  --line:#dadce0; --line-soft:#e8eaed;
+  --accent:#0b57d0; --on-accent:#ffffff;
+  --sel:#c2e7ff; --sel-text:#001d35; --sel-line:#a8c7fa;
+  --danger:#b3261e; --ok:#1e8e3e;
+  --t-video:#d93025; --t-image:#1e8e3e; --t-pdf:#c5221f; --t-doc:#1a73e8;
+  --t-audio:#e8710a; --t-zip:#5f6368; --t-file:#5f6368; --t-folder:#5f6368;
+  --sh-1:0 1px 2px rgba(60,64,67,.25), 0 1px 3px 1px rgba(60,64,67,.1);
+  --sh-2:0 1px 3px rgba(60,64,67,.2), 0 4px 12px 3px rgba(60,64,67,.12);
+  --r:8px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#0D131A; --card:#151F29; --sunk:#101922;
-    --ink:#E7EEF5; --ink-2:#BCCBD9; --muted:#8A9BAB;
-    --line:#25333F; --line-soft:#1C2831;
-    --accent:#4FB4E4; --accent-ink:#93D3F1; --accent-soft:#122B39;
-    --warn:#DEA85C; --warn-soft:#2A2214; --warn-line:#453718;
-    --ok:#5EC59A; --ok-soft:#112A20;
-    --danger:#E9928A; --danger-soft:#331A17;
-    --on-accent:#08131A;
-    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -20px rgba(0,0,0,.85);
+    --bg:#131314; --surface:#1e1f20; --surface-2:#2d2f31; --hover:#2d2f31;
+    --text:#e3e3e3; --text-2:#c4c7c5; --muted:#9aa0a6;
+    --line:#444746; --line-soft:#333537;
+    --accent:#a8c7fa; --on-accent:#062e6f;
+    --sel:#004a77; --sel-text:#c2e7ff; --sel-line:#0842a0;
+    --danger:#f2b8b5; --ok:#6dd58c;
+    --t-video:#f28b82; --t-image:#81c995; --t-pdf:#f28b82; --t-doc:#8ab4f8;
+    --t-audio:#fcad70; --t-zip:#9aa0a6; --t-file:#9aa0a6; --t-folder:#9aa0a6;
+    --sh-1:0 1px 2px rgba(0,0,0,.4), 0 1px 3px 1px rgba(0,0,0,.25);
+    --sh-2:0 1px 3px rgba(0,0,0,.5), 0 4px 12px 3px rgba(0,0,0,.3);
   }
 }
 :root[data-theme="dark"]{
-  --paper:#0D131A; --card:#151F29; --sunk:#101922;
-  --ink:#E7EEF5; --ink-2:#BCCBD9; --muted:#8A9BAB;
-  --line:#25333F; --line-soft:#1C2831;
-  --accent:#4FB4E4; --accent-ink:#93D3F1; --accent-soft:#122B39;
-  --warn:#DEA85C; --warn-soft:#2A2214; --warn-line:#453718;
-  --ok:#5EC59A; --ok-soft:#112A20;
-  --danger:#E9928A; --danger-soft:#331A17;
-  --on-accent:#08131A;
-  --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -20px rgba(0,0,0,.85);
+  --bg:#131314; --surface:#1e1f20; --surface-2:#2d2f31; --hover:#2d2f31;
+  --text:#e3e3e3; --text-2:#c4c7c5; --muted:#9aa0a6;
+  --line:#444746; --line-soft:#333537;
+  --accent:#a8c7fa; --on-accent:#062e6f;
+  --sel:#004a77; --sel-text:#c2e7ff; --sel-line:#0842a0;
+  --danger:#f2b8b5; --ok:#6dd58c;
+  --t-video:#f28b82; --t-image:#81c995; --t-pdf:#f28b82; --t-doc:#8ab4f8;
+  --t-audio:#fcad70; --t-zip:#9aa0a6; --t-file:#9aa0a6; --t-folder:#9aa0a6;
+  --sh-1:0 1px 2px rgba(0,0,0,.4), 0 1px 3px 1px rgba(0,0,0,.25);
+  --sh-2:0 1px 3px rgba(0,0,0,.5), 0 4px 12px 3px rgba(0,0,0,.3);
 }
 *{box-sizing:border-box}
-html,body{margin:0}
+html,body{margin:0;height:100%}
 body{
-  background:var(--paper); color:var(--ink);
-  font:15.5px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg); color:var(--text);
+  font:14px/1.45 "Google Sans",Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;
   -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent;
-  padding-bottom:env(safe-area-inset-bottom);
 }
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-variant-numeric:tabular-nums}
-h1,h2,h3{margin:0;letter-spacing:-.018em;line-height:1.2}
-p{margin:0}
-button{font:inherit;cursor:pointer}
+button{font:inherit;cursor:pointer;color:inherit}
 [hidden]{display:none!important}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+svg{display:block;flex:none}
+.num{font-variant-numeric:tabular-nums}
 
-/* ---------- shell ---------- */
-.top{
-  position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--line);
-  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+/* ------------------------------- header ------------------------------- */
+.hdr{
+  height:64px;display:flex;align-items:center;gap:8px;padding:0 16px;
+  background:var(--bg);position:sticky;top:0;z-index:40
 }
-.top-in{max-width:940px;margin:0 auto;display:flex;align-items:center;gap:12px}
-.brand{display:flex;align-items:center;gap:9px;min-width:0}
-.brand img{width:26px;height:26px;border-radius:6px;display:block}
-.brand b{font-size:16.5px;font-weight:650;letter-spacing:-.02em}
-.chip{
-  font-size:12px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap;
-  background:var(--accent-soft);color:var(--accent-ink);border:1px solid transparent
+.hamb{display:none;background:none;border:0;padding:8px;border-radius:50%}
+.hamb:hover{background:var(--hover)}
+.logo{display:flex;align-items:center;gap:10px;width:216px;flex:none}
+.logo img{width:28px;height:28px;border-radius:6px}
+.logo b{font-size:20px;font-weight:500;letter-spacing:-.01em}
+.searchwrap{
+  flex:1;min-width:0;max-width:720px;display:flex;align-items:center;gap:10px;
+  background:var(--surface-2);border-radius:24px;padding:0 16px;height:46px;
+  border:1px solid transparent;transition:background .12s,box-shadow .12s
 }
-.chip.off{background:var(--sunk);color:var(--muted)}
-.spacer{flex:1}
-.gbtn{
-  background:transparent;border:1px solid var(--line);color:var(--ink-2);
-  padding:6px 11px;border-radius:7px;font-size:13.5px;font-weight:550
+.searchwrap:focus-within{background:var(--surface);box-shadow:var(--sh-1);border-color:transparent}
+.searchwrap svg{color:var(--muted)}
+.searchwrap input{
+  flex:1;min-width:0;background:none;border:0;outline:none;color:var(--text);
+  font:15px/1.4 inherit
 }
-.gbtn:hover{background:var(--sunk);color:var(--ink)}
-main{max-width:940px;margin:0 auto;padding:22px 16px 64px;display:flex;flex-direction:column;gap:20px}
+.searchwrap input::placeholder{color:var(--muted)}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--on-accent);
+  display:grid;place-items:center;font-weight:600;font-size:14px;border:0;flex:none
+}
+.iconbtn{background:none;border:0;padding:8px;border-radius:50%;color:var(--text-2);display:grid;place-items:center}
+.iconbtn:hover{background:var(--hover);color:var(--text)}
+.iconbtn.on{background:var(--sel);color:var(--sel-text)}
 
-/* ---------- cards ---------- */
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-.card-h{padding:16px 18px;border-bottom:1px solid var(--line-soft);display:flex;gap:12px;align-items:flex-start}
-.card-b{padding:18px}
-.step-n{
-  flex:0 0 auto;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;
-  font-size:12.5px;font-weight:700;background:var(--accent-soft);color:var(--accent-ink)
+/* -------------------------------- shell ------------------------------- */
+.shell{display:flex;align-items:flex-start;gap:0;min-height:calc(100vh - 64px)}
+aside{
+  width:232px;flex:none;padding:0 12px 24px;position:sticky;top:64px;
+  height:calc(100vh - 64px);display:flex;flex-direction:column;gap:14px
 }
-.step-n.done{background:var(--ok-soft);color:var(--ok)}
-.card-h h2{font-size:17px;font-weight:620}
-.card-h .sub{margin-top:3px;font-size:14px;color:var(--muted);max-width:64ch}
+.newbtn{
+  display:flex;align-items:center;gap:12px;align-self:flex-start;
+  background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;
+  padding:13px 22px 13px 18px;font-size:14px;font-weight:500;box-shadow:var(--sh-1);color:var(--text)
+}
+.newbtn:hover{box-shadow:var(--sh-2);background:var(--hover)}
+nav{display:flex;flex-direction:column;gap:2px}
+.navitem{
+  display:flex;align-items:center;gap:14px;padding:8px 14px;border-radius:0 20px 20px 0;
+  background:none;border:0;text-align:left;font-size:14px;font-weight:500;color:var(--text-2);
+  width:100%;margin-left:-12px;padding-left:26px
+}
+.navitem:hover{background:var(--hover)}
+.navitem.on{background:var(--sel);color:var(--sel-text)}
+.navitem .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:400}
+.navitem.on .cnt{color:var(--sel-text);opacity:.75}
+.storage{margin-top:auto;padding:0 14px;display:flex;flex-direction:column;gap:7px}
+.storage .lab{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.meter{height:4px;border-radius:99px;background:var(--surface-2);overflow:hidden;display:flex;gap:1px}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px;width:0}
+.storage .val{font-size:13px;color:var(--text-2)}
+.storage .val b{font-weight:600}
 
-label.fl{display:block;font-size:12px;font-weight:650;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-input[type=text],input[type=password],textarea{
-  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:7px;
-  background:var(--paper);color:var(--ink);font:inherit
+/* ------------------------------- content ------------------------------ */
+.content{
+  flex:1;min-width:0;background:var(--surface);border-radius:16px 0 0 0;
+  padding:18px 22px 40px;min-height:calc(100vh - 64px)
 }
-input.mono,textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px}
-textarea{resize:vertical;min-height:66px}
-input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.row.tight{gap:8px}
-.grow{flex:1;min-width:200px}
-.btn{
-  background:var(--accent);color:var(--on-accent);border:0;padding:10px 16px;border-radius:7px;font-weight:600;font-size:14.5px
-}
-.btn:hover{filter:brightness(1.07)}
-.btn:disabled,.gbtn:disabled{opacity:.45;cursor:not-allowed;filter:none}
-.btn.ghost{background:transparent;color:var(--accent-ink);border:1px solid var(--accent)}
-.btn.quiet{background:var(--sunk);color:var(--ink-2);border:1px solid var(--line)}
-.btn.sm{padding:6px 11px;font-size:13px;border-radius:6px}
-.btn.danger{background:transparent;color:var(--danger);border:1px solid var(--danger)}
-.hint{font-size:13.5px;color:var(--muted);margin-top:9px}
-.hint code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--sunk);padding:1px 5px;border-radius:4px;border:1px solid var(--line-soft)}
-
-.note{
-  display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:start;
-  padding:12px 14px;border-radius:7px;font-size:14px;line-height:1.5
-}
-.note b{font-weight:650}
-.note.warn{background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn-line)}
-.note.info{background:var(--accent-soft);color:var(--accent-ink)}
-.note .ic{font-size:15px;line-height:1.35}
-.msg{font-size:14px;margin-top:10px;padding:9px 12px;border-radius:6px;display:none}
-.msg.show{display:block}
-.msg.ok{background:var(--ok-soft);color:var(--ok)}
-.msg.bad{background:var(--danger-soft);color:var(--danger)}
-
-/* ---------- channel picker ---------- */
-.pick{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.pick button{
-  text-align:left;background:var(--sunk);border:1px solid var(--line);border-radius:7px;padding:11px 13px;
-  color:var(--ink);display:flex;justify-content:space-between;gap:12px;align-items:center
-}
-.pick button:hover{border-color:var(--accent)}
-.pick .nm{font-weight:600}
-.pick .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--muted)}
-
-/* ---------- dropzone ---------- */
-.drop{
-  border:1.5px dashed var(--line);border-radius:var(--radius);background:var(--card);
-  padding:30px 20px;text-align:center;transition:border-color .12s,background .12s
-}
-.drop.hot{border-color:var(--accent);background:var(--accent-soft)}
-.drop h2{font-size:18px;font-weight:620}
-.drop p{margin-top:6px;color:var(--muted);font-size:14px}
-.drop .row{justify-content:center;margin-top:16px}
-
-/* ---------- transfers ---------- */
-.xfer{display:flex;flex-direction:column}
-.xrow{padding:13px 18px;border-bottom:1px solid var(--line-soft);display:flex;flex-direction:column;gap:8px}
-.xrow:last-child{border-bottom:0}
-.xtop{display:flex;gap:12px;align-items:baseline}
-.xname{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
-.xstat{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.bar{height:5px;border-radius:99px;background:var(--sunk);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .18s ease-out;border-radius:99px}
-.xrow.err .bar i{background:var(--danger)}
-.xerr{font-size:13px;color:var(--danger)}
-
-/* ---------- file list ---------- */
-.list{display:flex;flex-direction:column}
-.frow{
-  display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:13px;align-items:center;
-  padding:12px 18px;border-bottom:1px solid var(--line-soft)
-}
-.frow:last-child{border-bottom:0}
-.ft{
-  width:34px;height:34px;border-radius:7px;display:grid;place-items:center;
-  background:var(--sunk);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.02em;
-  border:1px solid var(--line-soft);text-transform:uppercase;overflow:hidden
-}
-.fmeta{min-width:0}
-.fname{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fsub{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
-.fsub .dot{opacity:.5;margin:0 5px}
-.fsub .bad{color:var(--danger)}
-.facts{display:flex;gap:7px}
-.empty{padding:34px 18px;text-align:center;color:var(--muted);font-size:14.5px}
-
-/* ---------- stats ---------- */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line-soft);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
-.stat{background:var(--card);padding:14px 16px}
-.stat .k{font-size:11px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.stat .v{font-size:21px;font-weight:650;margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.stat .v small{font-size:13px;font-weight:550;color:var(--muted);letter-spacing:0}
-
-details.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-details.panel > summary{
-  padding:14px 18px;cursor:pointer;font-weight:620;font-size:15px;display:flex;align-items:center;gap:9px;list-style:none
-}
-details.panel > summary::-webkit-details-marker{display:none}
-details.panel > summary::before{content:"›";color:var(--muted);font-size:19px;line-height:1;transition:transform .15s}
-details.panel[open] > summary::before{transform:rotate(90deg)}
-details.panel > summary:hover{background:var(--sunk)}
-.panel-b{padding:4px 18px 18px;display:flex;flex-direction:column;gap:18px;border-top:1px solid var(--line-soft)}
-.sect h3{font-size:14px;font-weight:650;margin-bottom:4px}
-.sect p.d{font-size:13.5px;color:var(--muted);margin-bottom:10px;max-width:66ch}
-.limits{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
-.limits span b{color:var(--ink-2);font-weight:600}
-
-.toast{
-  position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);
-  background:var(--ink);color:var(--paper);padding:11px 16px;border-radius:8px;font-size:14px;
-  max-width:min(560px,calc(100vw - 32px));box-shadow:0 8px 30px rgba(0,0,0,.3);z-index:60;
-  opacity:0;pointer-events:none;transition:opacity .18s,transform .18s
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
-@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
-@media (max-width:560px){
-  .frow{grid-template-columns:30px minmax(0,1fr);gap:11px;padding:12px 14px}
-  .facts{grid-column:1/-1;justify-content:flex-start}
-  .ft{width:30px;height:30px}
-  .card-b,.card-h{padding-left:14px;padding-right:14px}
-  .xrow{padding-left:14px;padding-right:14px}
-  main{padding:16px 12px 56px}
-}
-/* ================= additions for the TDLib build ================= */
-.top-in{flex-wrap:wrap;row-gap:8px}
-.usage{display:flex;align-items:baseline;gap:7px;margin-left:auto}
-.usage .n{font-size:19px;font-weight:680;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
-.usage .u{font-size:12px;font-weight:600;color:var(--muted)}
-.usage .c{font-size:12px;color:var(--muted);border-left:1px solid var(--line);padding-left:9px;margin-left:2px}
-
-/* breadcrumb + toolbar */
-.toolbar{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:11px 16px;background:var(--card);border:1px solid var(--line);
-  border-radius:var(--radius);box-shadow:var(--shadow)
-}
-.crumbs{display:flex;align-items:center;gap:3px;flex-wrap:wrap;min-width:0;font-size:14px}
+.crow{display:flex;align-items:center;gap:8px;min-height:44px;margin-bottom:6px}
+.crumbs{display:flex;align-items:center;gap:2px;flex-wrap:wrap;min-width:0}
 .crumbs button{
-  background:transparent;border:0;color:var(--accent-ink);padding:3px 6px;border-radius:5px;
-  font:inherit;font-weight:600
+  background:none;border:0;font-size:22px;font-weight:500;letter-spacing:-.01em;
+  padding:4px 8px;border-radius:6px;color:var(--text)
 }
-.crumbs button:hover{background:var(--accent-soft)}
-.crumbs .sep{color:var(--muted);opacity:.6}
-.crumbs .here{font-weight:650;padding:3px 6px;color:var(--ink)}
-
-.selbar{
-  display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 16px;
-  background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius)
+.crumbs button:hover{background:var(--hover)}
+.crumbs .sep{color:var(--muted);font-size:20px;padding:0 2px}
+.crumbs .here{font-size:22px;font-weight:500;padding:4px 8px;letter-spacing:-.01em}
+.crow .tools{margin-left:auto;display:flex;align-items:center;gap:4px}
+.seg{display:flex;background:var(--surface-2);border-radius:20px;padding:2px}
+.seg button{background:none;border:0;padding:7px 9px;border-radius:18px;color:var(--text-2);display:grid;place-items:center}
+.seg button.on{background:var(--surface);color:var(--accent);box-shadow:var(--sh-1)}
+.sortsel{
+  background:none;border:1px solid var(--line);border-radius:18px;padding:7px 12px;
+  font-size:13px;color:var(--text-2);appearance:none;cursor:pointer
 }
-.selbar .cnt{font-size:14px;font-weight:650;color:var(--accent-ink);margin-right:2px}
-.selbar .spacer{flex:1}
 
-/* rows */
-.frow{grid-template-columns:22px 34px minmax(0,1fr) auto}
-.frow.sel{background:var(--accent-soft)}
-.frow.folder .ft{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
-.cbx{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;margin:0}
-.fname.link{cursor:pointer}
-.fname.link:hover{color:var(--accent-ink);text-decoration:underline}
-.ft svg{width:19px;height:19px;display:block}
-
-/* transfer queue */
-.qhead{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line-soft)}
-.qhead h2{font-size:16px;font-weight:640;flex:1}
-.qsum{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.xrow .dir{
-  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  padding:2px 6px;border-radius:3px;background:var(--sunk);color:var(--muted);border:1px solid var(--line-soft)
+/* action bar when items are selected */
+.actionbar{
+  display:flex;align-items:center;gap:6px;background:var(--sel);color:var(--sel-text);
+  border-radius:24px;padding:6px 10px 6px 6px;min-height:48px;margin-bottom:10px
 }
-.xrow.up .dir{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
-.xrow.dn .dir{background:var(--ok-soft);color:var(--ok);border-color:transparent}
-.xrow.wait{opacity:.62}
-
-/* login */
-.authwrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-.codebox{letter-spacing:.34em;font-size:22px;text-align:center;font-weight:600;padding:13px}
-.tiny{font-size:12.5px;color:var(--muted);margin-top:8px}
-.tiny a{color:var(--accent-ink)}
-.dim{opacity:.55;pointer-events:none}
-.spin{
-  width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);
-  border-radius:50%;display:inline-block;vertical-align:-3px;animation:sp .7s linear infinite
+.actionbar .cnt{font-size:14px;font-weight:500;padding:0 8px}
+.actionbar .abtn{
+  background:none;border:0;padding:9px;border-radius:50%;color:var(--sel-text);display:grid;place-items:center
 }
+.actionbar .abtn:hover{background:rgba(0,0,0,.09)}
+:root[data-theme="dark"] .actionbar .abtn:hover,
+:root:not([data-theme="light"]) .actionbar .abtn:hover{background:rgba(255,255,255,.12)}
+.actionbar .spacer{flex:1}
+
+/* ------------------------------ list view ----------------------------- */
+.lhead{
+  display:grid;grid-template-columns:26px 1fr 150px 110px 96px;gap:12px;align-items:center;
+  padding:6px 12px;border-bottom:1px solid var(--line-soft);
+  font-size:12px;font-weight:500;color:var(--muted)
+}
+.lhead .r{text-align:right}
+.rows{display:flex;flex-direction:column}
+.row{
+  display:grid;grid-template-columns:26px 1fr 150px 110px 96px;gap:12px;align-items:center;
+  padding:0 12px;height:48px;border-radius:24px;cursor:pointer
+}
+.row:hover{background:var(--hover)}
+.row.on{background:var(--sel);color:var(--sel-text)}
+.row .cb{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;margin:0;opacity:0}
+.row:hover .cb,.row .cb:checked,.row.on .cb,.row .cb:focus-visible{opacity:1}
+.nm{display:flex;align-items:center;gap:14px;min-width:0}
+.nm .ico{width:20px;height:20px;flex:none}
+.nm .thumb{width:24px;height:24px;border-radius:4px;object-fit:cover;flex:none;background:var(--surface-2)}
+.nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.cell{font-size:13px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.on .cell{color:var(--sel-text)}
+.cell.r{text-align:right}
+.rowacts{display:flex;justify-content:flex-end;gap:2px}
+.rowacts .iconbtn{opacity:0;padding:7px}
+.row:hover .rowacts .iconbtn,.row.on .rowacts .iconbtn{opacity:1}
+.row.on .rowacts .iconbtn{color:var(--sel-text)}
+.row.on .rowacts .iconbtn:hover{background:rgba(0,0,0,.09)}
+
+/* ------------------------------ grid view ----------------------------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:12px;padding-top:12px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  cursor:pointer;display:flex;flex-direction:column
+}
+.card:hover{background:var(--hover);border-color:var(--line)}
+.card.on{background:var(--sel);border-color:var(--sel-line);color:var(--sel-text)}
+.card .top{display:flex;align-items:center;gap:10px;padding:11px 12px;min-width:0}
+.card .top .ico{width:18px;height:18px;flex:none}
+.card .top .t{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.card .cb{width:17px;height:17px;accent-color:var(--accent);margin:0;opacity:0;flex:none}
+.card:hover .cb,.card .cb:checked,.card.on .cb{opacity:1}
+.card .prev{
+  height:132px;margin:0 8px 8px;border-radius:8px;background:var(--surface-2);
+  display:grid;place-items:center;overflow:hidden;position:relative
+}
+.card .prev img{width:100%;height:100%;object-fit:cover;display:block}
+.card .prev .big{width:44px;height:44px;opacity:.6}
+.card .prev .play{
+  position:absolute;inset:0;display:grid;place-items:center;
+  background:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.35))
+}
+.card .prev .play svg{width:34px;height:34px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.card .meta{padding:0 12px 11px;font-size:12px;color:var(--muted)}
+.card.on .meta{color:var(--sel-text);opacity:.8}
+
+.empty{padding:72px 20px;text-align:center;color:var(--muted)}
+.empty svg{width:46px;height:46px;margin:0 auto 14px;opacity:.4}
+.empty p{margin:0;font-size:14px}
+.empty p.t{font-size:16px;color:var(--text-2);margin-bottom:5px}
+
+/* ---------------------------- transfers card -------------------------- */
+.tpanel{
+  position:fixed;right:20px;bottom:20px;width:min(360px,calc(100vw - 32px));z-index:50;
+  background:var(--surface);border-radius:12px;box-shadow:var(--sh-2);overflow:hidden;
+  border:1px solid var(--line-soft)
+}
+.tpanel .th{display:flex;align-items:center;gap:8px;padding:12px 8px 12px 16px;background:var(--surface-2)}
+.tpanel .th b{font-size:14px;font-weight:500;flex:1}
+.tbody{max-height:270px;overflow-y:auto}
+.trow{display:grid;grid-template-columns:20px 1fr auto;gap:11px;align-items:center;padding:10px 14px}
+.trow .ico{width:20px;height:20px}
+.trow .n{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .s{font-size:11px;color:var(--muted);margin-top:2px}
+.trow .pct{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.trow.err .s{color:var(--danger)}
+.ring{width:22px;height:22px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:3}
+.ring .bgc{stroke:var(--line-soft)}
+.ring .fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .2s}
+.tdone{color:var(--ok)}
+
+/* ------------------------------- preview ------------------------------ */
+.pv{position:fixed;inset:0;z-index:80;background:rgba(15,17,20,.94);display:flex;flex-direction:column}
+.pv-top{display:flex;align-items:center;gap:12px;padding:12px 16px;color:#e8eaed}
+.pv-top .nm2{font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv-top .sz{font-size:12px;color:#9aa0a6;flex:none}
+.pv-top .iconbtn{color:#e8eaed}
+.pv-top .iconbtn:hover{background:rgba(255,255,255,.12)}
+.pv-body{flex:1;display:grid;place-items:center;padding:8px 16px 24px;min-height:0;position:relative}
+.pv-body img,.pv-body video{max-width:100%;max-height:100%;display:block;border-radius:4px;background:#000}
+.pv-body iframe{width:min(1000px,100%);height:100%;border:0;border-radius:4px;background:#fff}
+.pv-body audio{width:min(560px,100%)}
+.pv-nav{
+  position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);
+  border:0;color:#fff;width:44px;height:44px;border-radius:50%;display:grid;place-items:center
+}
+.pv-nav:hover{background:rgba(255,255,255,.22)}
+.pv-nav.prev{left:10px} .pv-nav.next{right:10px}
+.pv-msg{text-align:center;color:#bdc1c6;max-width:420px}
+.pv-msg svg{width:56px;height:56px;margin:0 auto 16px;opacity:.5}
+.pv-msg p{margin:0 0 6px;font-size:15px;color:#e8eaed}
+.pv-msg small{display:block;font-size:13px;margin-bottom:18px}
+.pv-btn{
+  background:var(--accent);color:var(--on-accent);border:0;border-radius:20px;
+  padding:10px 22px;font-size:14px;font-weight:500;margin:0 5px
+}
+.pv-btn.alt{background:transparent;color:#e8eaed;border:1px solid rgba(255,255,255,.4)}
+.pvbar{width:220px;height:4px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;margin:16px auto 0}
+.pvbar i{display:block;height:100%;background:#fff;width:0;border-radius:99px}
+
+/* -------------------------------- auth -------------------------------- */
+.auth{max-width:460px;margin:6vh auto 0;padding:0 20px}
+.auth .box{background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;padding:28px;box-shadow:var(--sh-1)}
+.auth h1{margin:0 0 6px;font-size:23px;font-weight:500;letter-spacing:-.01em}
+.auth p.sub{margin:0 0 22px;font-size:14px;color:var(--muted)}
+.auth label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin:0 0 6px}
+.auth input{
+  width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:8px;
+  background:var(--surface);color:var(--text);font:14px/1.4 inherit;font-family:ui-monospace,Menlo,monospace
+}
+.auth input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+.auth .gap{height:16px}
+.auth .btnrow{display:flex;align-items:center;gap:10px;margin-top:22px}
+.pbtn{background:var(--accent);color:var(--on-accent);border:0;border-radius:20px;padding:11px 26px;font-size:14px;font-weight:500}
+.pbtn:disabled{opacity:.5;cursor:not-allowed}
+.tbtn{background:none;border:0;color:var(--accent);font-size:14px;font-weight:500;padding:11px 12px;border-radius:20px}
+.tbtn:hover{background:var(--hover)}
+.auth .tiny{font-size:12px;color:var(--muted);margin:14px 0 0}
+.auth .tiny a{color:var(--accent)}
+.auth .code{letter-spacing:.3em;font-size:22px;text-align:center;font-weight:500}
+.warn{
+  display:flex;gap:11px;background:#fef7e0;color:#7b5800;border-radius:12px;
+  padding:13px 15px;font-size:13px;line-height:1.5;margin-bottom:16px
+}
+:root[data-theme="dark"] .warn,
+:root:not([data-theme="light"]) .warn{background:#2e2a15;color:#fdd663}
+.warn svg{flex:none;margin-top:1px}
+.msg{margin-top:14px;font-size:13px;padding:10px 13px;border-radius:8px;display:none}
+.msg.show{display:block}
+.msg.bad{background:#fce8e6;color:#b3261e}
+.msg.ok{background:#e6f4ea;color:#1e6b32}
+:root[data-theme="dark"] .msg.bad,:root:not([data-theme="light"]) .msg.bad{background:#3b1f1c;color:#f2b8b5}
+:root[data-theme="dark"] .msg.ok,:root:not([data-theme="light"]) .msg.ok{background:#17301f;color:#81c995}
+
+.boot{display:flex;align-items:center;justify-content:center;gap:12px;padding:22vh 20px;color:var(--muted);font-size:14px}
+.spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-.boot{display:flex;align-items:center;gap:11px;justify-content:center;padding:44px 18px;color:var(--muted);font-size:14.5px}
+.toast{
+  position:fixed;left:24px;bottom:24px;background:#3c4043;color:#fff;padding:14px 18px;
+  border-radius:8px;font-size:14px;max-width:min(460px,calc(100vw - 48px));box-shadow:var(--sh-2);
+  z-index:90;opacity:0;pointer-events:none;transition:opacity .16s
+}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+@media (max-width:640px){
+  .crow{flex-wrap:wrap;row-gap:4px;align-items:flex-start}
+  .crumbs{flex:1 1 100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .crumbs::-webkit-scrollbar{display:none}
+  .crumbs button,.crumbs .here{white-space:nowrap}
+  .crow .tools{margin-left:0}
+}
 @media (max-width:560px){
-  .frow{grid-template-columns:22px 30px minmax(0,1fr)}
-  .usage{margin-left:0;width:100%;border-top:1px solid var(--line-soft);padding-top:8px}
+  .logo b{display:none}
+  .hdr{padding:0 8px;gap:4px}
+  .searchwrap{height:42px;padding:0 12px}
+}
+@media (max-width:900px){
+  .logo{width:auto}
+  .hdr{flex-wrap:nowrap}
+  .hamb{display:grid;place-items:center}
+  aside{
+    position:fixed;left:0;top:64px;bottom:0;width:260px;background:var(--surface);
+    box-shadow:var(--sh-2);z-index:45;transform:translateX(-102%);transition:transform .18s;
+    padding-top:14px;height:auto
+  }
+  aside.open{transform:none}
+  .content{border-radius:0;padding:14px 12px 40px}
+  .lhead,.row{grid-template-columns:26px 1fr 84px}
+  .lhead .mod,.row .mod{display:none}
+  .crumbs button,.crumbs .here{font-size:19px}
+}
+
+.lhead .cb{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;margin:0}
+/* touch devices get no hover, so never hide a control behind it */
+@media (pointer: coarse){
+  .row .cb,.card .cb{opacity:1}
+  .rowacts .iconbtn{opacity:1}
 }
 
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="top-in">
-    <span class="brand"><img src="icon.svg" alt=""><b>Vault</b></span>
-    <span class="chip off" id="meChip">signed out</span>
-    <span class="usage" id="usage" hidden>
-      <span class="n" id="uNum">0</span><span class="u" id="uUnit">B</span>
-      <span class="c" id="uCount">0 files</span>
-    </span>
-    <button class="gbtn" id="logoutBtn" hidden>Log out</button>
+<div id="booting"><div class="boot"><span class="spin"></span><span id="bootMsg">Starting…</span></div></div>
+
+<!-- ============================== auth ============================== -->
+<div id="scrKeys" hidden><div class="auth"><div class="box">
+  <div class="warn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+    <span>This signs in to your whole Telegram account, not a bot. Only enter a login code on a page whose address you recognise.</span>
   </div>
-</header>
+  <h1>Connect your Telegram</h1>
+  <p class="sub">Create an app at my.telegram.org → API development tools to get your own keys.</p>
+  <label for="apiId">api_id</label>
+  <input type="text" id="apiId" placeholder="1234567" inputmode="numeric" autocomplete="off" spellcheck="false">
+  <div class="gap"></div>
+  <label for="apiHash">api_hash</label>
+  <input type="text" id="apiHash" placeholder="0123456789abcdef0123456789abcdef" autocomplete="off" spellcheck="false">
+  <div class="btnrow"><button class="pbtn" id="keysBtn">Continue</button></div>
+  <p class="tiny">Saved in this browser and reused automatically. <a href="https://my.telegram.org/apps" target="_blank" rel="noreferrer noopener">Open my.telegram.org</a></p>
+  <div class="msg" id="mKeys"></div>
+</div></div></div>
 
-<main>
+<div id="scrPhone" hidden><div class="auth"><div class="box">
+  <h1>Sign in</h1>
+  <p class="sub">Telegram sends a code to your existing app.</p>
+  <label for="phone">Phone number with country code</label>
+  <input type="text" id="phone" placeholder="+919876543210" inputmode="tel" autocomplete="tel">
+  <div class="btnrow"><button class="pbtn" id="phoneBtn">Send code</button><button class="tbtn" id="editKeysBtn">Change keys</button></div>
+  <div class="msg" id="mPhone"></div>
+</div></div></div>
 
-  <!-- ===================== booting ===================== -->
-  <section id="booting">
-    <div class="boot"><span class="spin"></span><span id="bootMsg">Starting TDLib…</span></div>
-  </section>
+<div id="scrCode" hidden><div class="auth"><div class="box">
+  <h1>Enter the code</h1>
+  <p class="sub" id="codeHint">Check your Telegram app.</p>
+  <input class="code" type="text" id="code" placeholder="00000" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+  <div class="btnrow"><button class="pbtn" id="codeBtn">Sign in</button><button class="tbtn" id="backPhoneBtn">Different number</button></div>
+  <div class="msg" id="mCode"></div>
+</div></div></div>
 
-  <!-- ===================== step 1: API credentials ===================== -->
-  <section id="scrKeys" hidden>
-    <div class="authwrap">
-      <div class="note warn">
-        <span class="ic">⚠</span>
-        <span><b>This signs you in to your whole Telegram account.</b> Not a bot, not one channel — everything. Only ever enter a login code on a page whose address you recognise, and consider using a spare Telegram account for this.</span>
+<div id="scrPass" hidden><div class="auth"><div class="box">
+  <h1>Two-step verification</h1>
+  <p class="sub" id="passHint">This account has a password.</p>
+  <input type="password" id="pass" placeholder="Password" autocomplete="current-password">
+  <div class="btnrow"><button class="pbtn" id="passBtn">Unlock</button></div>
+  <div class="msg" id="mPass"></div>
+</div></div></div>
+
+<!-- ============================== vault ============================== -->
+<div id="scrVault" hidden>
+  <header class="hdr">
+    <button class="hamb iconbtn" id="hambBtn" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <span class="logo"><img src="icon.svg" alt=""><b>Vault</b></span>
+    <div class="searchwrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      <input type="text" id="search" placeholder="Search in Vault" autocomplete="off">
+      <button class="iconbtn" id="clearSearch" hidden aria-label="Clear search"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    </div>
+    <div class="hdr-right">
+      <button class="iconbtn" id="logoutBtn" aria-label="Sign out" title="Sign out"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg></button>
+      <button class="avatar" id="avatar" aria-label="Account">?</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside id="side">
+      <button class="newbtn" id="newBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        New
+      </button>
+      <nav>
+        <button class="navitem on" id="navMine" data-view="mine">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+          My Vault
+        </button>
+        <button class="navitem" id="navAll" data-view="all">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          All files <span class="cnt" id="cntAll"></span>
+        </button>
+        <button class="navitem" id="navRecent" data-view="recent">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l4 4 4-4H6a7 7 0 1 1 7 7 6.9 6.9 0 0 1-4.9-2L6.7 18.4A9 9 0 1 0 13 3zm-1 5v5l4.3 2.5.7-1.2-3.5-2.1V8H12z"/></svg>
+          Recent
+        </button>
+      </nav>
+      <div class="storage">
+        <div class="lab">Storage</div>
+        <div class="meter"><i id="meterFill"></i></div>
+        <div class="val"><b id="usedVal">0 B</b> used</div>
       </div>
-      <div class="card">
-        <div class="card-h">
-          <span class="step-n" id="k1">1</span>
-          <div>
-            <h2>Your Telegram API keys</h2>
-            <p class="sub">Sign in at <b>my.telegram.org</b> → API development tools → create an app. You get an <b>api_id</b> and an <b>api_hash</b>. They're yours — don't reuse anyone else's.</p>
+    </aside>
+
+    <section class="content">
+      <div class="actionbar" id="actionbar" hidden>
+        <button class="abtn" id="selNone" aria-label="Clear selection"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        <span class="cnt" id="selCnt">0 selected</span>
+        <button class="abtn" id="dlSel" aria-label="Download" title="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
+        <button class="abtn" id="delSel" aria-label="Delete" title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        <span class="spacer"></span>
+        <button class="abtn" id="selAll" aria-label="Select all" title="Select all"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h2V3a2 2 0 0 0-2 2zm0 8h2v-2H3v2zm4 8h2v-2H7v2zM3 9h2V7H3v2zm10-6h-2v2h2V3zM19 3v2h2a2 2 0 0 0-2-2zM5 21v-2H3a2 2 0 0 0 2 2zm-2-4h2v-2H3v2zM9 3H7v2h2V3zm2 18h2v-2h-2v2zm8-8h2v-2h-2v2zm0 8a2 2 0 0 0 2-2h-2v2zm0-12h2V7h-2v2zm0 8h2v-2h-2v2zm-4 4h2v-2h-2v2zm0-16h2V3h-2v2zM7 17h10V7H7v10z"/></svg></button>
+      </div>
+
+      <div class="crow" id="crow">
+        <div class="crumbs" id="crumbs"></div>
+        <div class="tools">
+          <select class="sortsel" id="sort" aria-label="Sort by">
+            <option value="new">Last modified</option>
+            <option value="name">Name</option>
+            <option value="big">Size</option>
+          </select>
+          <div class="seg">
+            <button id="vList" class="on" aria-label="List view" title="List view"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></button>
+            <button id="vGrid" aria-label="Grid view" title="Grid view"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm7 0h5v-6h-5v6zm7 0h5v-6h-5v6zm-7-7h5V5h-5v6zm7-6v6h5V5h-5z"/></svg></button>
           </div>
         </div>
-        <div class="card-b">
-          <label class="fl" for="apiId">api_id</label>
-          <input class="mono" type="text" id="apiId" placeholder="1234567" inputmode="numeric" autocomplete="off" spellcheck="false">
-          <div style="height:12px"></div>
-          <label class="fl" for="apiHash">api_hash</label>
-          <input class="mono" type="text" id="apiHash" placeholder="0123456789abcdef0123456789abcdef" autocomplete="off" spellcheck="false">
-          <div class="row" style="margin-top:14px">
-            <button class="btn" id="keysBtn">Save &amp; continue</button>
-          </div>
-          <p class="tiny">Saved in this browser only, and reused automatically next time. <a href="https://my.telegram.org/apps" target="_blank" rel="noreferrer noopener">Open my.telegram.org →</a></p>
-          <div class="msg" id="mKeys"></div>
-        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ===================== step 2: phone ===================== -->
-  <section id="scrPhone" hidden>
-    <div class="authwrap">
-      <div class="card">
-        <div class="card-h">
-          <span class="step-n">2</span>
-          <div>
-            <h2>Sign in with your phone number</h2>
-            <p class="sub">Telegram sends a code to your existing Telegram app — not by SMS, usually.</p>
-          </div>
-        </div>
-        <div class="card-b">
-          <label class="fl" for="phone">Phone number, with country code</label>
-          <input class="mono" type="text" id="phone" placeholder="+919876543210" inputmode="tel" autocomplete="tel">
-          <div class="row" style="margin-top:14px">
-            <button class="btn" id="phoneBtn">Send code</button>
-            <button class="btn quiet sm" id="editKeysBtn">Change API keys</button>
-          </div>
-          <p class="tiny">Your number is used for this sign-in and is never stored by the app.</p>
-          <div class="msg" id="mPhone"></div>
-        </div>
+      <div class="lhead" id="lhead">
+        <input class="cb" type="checkbox" id="cbAll" aria-label="Select all files">
+        <span>Name</span><span class="mod">Last modified</span><span class="r">Size</span><span></span>
       </div>
+      <div id="listHost"></div>
+    </section>
+  </div>
+
+  <div class="tpanel" id="tpanel" hidden>
+    <div class="th">
+      <b id="tTitle">Transfers</b>
+      <button class="iconbtn" id="tClear" aria-label="Clear finished" title="Clear finished"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
     </div>
-  </section>
+    <div class="tbody" id="tbody"></div>
+  </div>
+</div>
 
-  <!-- ===================== step 3: code ===================== -->
-  <section id="scrCode" hidden>
-    <div class="authwrap">
-      <div class="card">
-        <div class="card-h">
-          <span class="step-n">3</span>
-          <div><h2>Enter the code</h2><p class="sub" id="codeHint">Check your other Telegram app for a login code.</p></div>
-        </div>
-        <div class="card-b">
-          <input class="mono codebox" type="text" id="code" placeholder="00000" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
-          <div class="row" style="margin-top:14px">
-            <button class="btn" id="codeBtn">Sign in</button>
-            <button class="btn quiet sm" id="backPhoneBtn">Use a different number</button>
-          </div>
-          <div class="msg" id="mCode"></div>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="pv" id="pv" hidden>
+  <div class="pv-top">
+    <span class="nm2" id="pvName"></span>
+    <span class="sz" id="pvSize"></span>
+    <button class="iconbtn" id="pvDl" aria-label="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
+    <button class="iconbtn" id="pvClose" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="pv-body" id="pvBody"></div>
+  <button class="pv-nav prev" id="pvPrev" aria-label="Previous"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+  <button class="pv-nav next" id="pvNext" aria-label="Next"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button>
+</div>
 
-  <!-- ===================== step 4: 2FA ===================== -->
-  <section id="scrPass" hidden>
-    <div class="authwrap">
-      <div class="card">
-        <div class="card-h">
-          <span class="step-n">4</span>
-          <div><h2>Two-step verification</h2><p class="sub" id="passHint">This account has a password set.</p></div>
-        </div>
-        <div class="card-b">
-          <input type="password" id="pass" placeholder="Your Telegram password" autocomplete="current-password">
-          <div class="row" style="margin-top:14px"><button class="btn" id="passBtn">Unlock</button></div>
-          <div class="msg" id="mPass"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== the vault ===================== -->
-  <section id="scrVault" hidden style="display:flex;flex-direction:column;gap:16px">
-
-    <div class="drop" id="drop">
-      <h2>Drop files here</h2>
-      <p>Straight into your Saved Messages, up to 2&nbsp;GB per file — 4&nbsp;GB with Premium. No splitting.</p>
-      <div class="row">
-        <button class="btn" id="pickBtn">Choose files</button>
-        <button class="btn quiet" id="newFolderBtn">New folder</button>
-        <input type="file" id="fileInput" multiple hidden>
-      </div>
-    </div>
-
-    <div class="toolbar">
-      <div class="crumbs" id="crumbs"></div>
-      <span class="spacer" style="flex:1"></span>
-      <button class="btn sm quiet" id="selAllBtn" hidden>Select all</button>
-      <input class="mono" type="text" id="search" placeholder="Filter…" style="max-width:180px" autocomplete="off">
-    </div>
-
-    <div class="selbar" id="selbar" hidden>
-      <span class="cnt" id="selCnt">0 selected</span>
-      <button class="btn sm ghost" id="dlSelBtn">Download</button>
-      <button class="btn sm danger" id="delSelBtn">Delete</button>
-      <span class="spacer"></span>
-      <button class="btn sm quiet" id="selNoneBtn">Deselect all</button>
-    </div>
-
-    <div class="card" id="qCard" hidden>
-      <div class="qhead">
-        <h2>Transfers</h2>
-        <span class="qsum" id="qSum"></span>
-        <button class="gbtn" id="qClearBtn">Clear finished</button>
-      </div>
-      <div class="xfer" id="xfer"></div>
-    </div>
-
-    <div class="card">
-      <div class="list" id="list"></div>
-    </div>
-
-    <details class="panel">
-      <summary>How this vault stores things</summary>
-      <div class="panel-b">
-        <div class="note info">
-          <span class="ic">ℹ</span>
-          <span>Your files are messages in your own <b>Saved Messages</b>. The index — names, folders, sizes and file references — is a <b>pinned <span class="mono">vault-index.json</span></b> in there too, so any device you sign in on rebuilds this view by itself.</span>
-        </div>
-        <div class="sect">
-          <h3>Index</h3>
-          <p class="d" id="idxLine">—</p>
-          <div class="row">
-            <button class="btn sm quiet" id="saveIdxBtn">Save index now</button>
-            <button class="btn sm quiet" id="reloadIdxBtn">Reload from Telegram</button>
-            <button class="btn sm quiet" id="exportIdxBtn">Download a copy</button>
-          </div>
-          <div class="msg" id="mIdx"></div>
-        </div>
-        <div class="sect">
-          <h3>This device</h3>
-          <p class="d" id="devLine">—</p>
-          <div class="row">
-            <button class="btn sm danger" id="wipeBtn">Log out &amp; wipe this device</button>
-          </div>
-          <p class="hint">Ends the Telegram session for this browser and clears the local TDLib database. Nothing in Saved Messages is touched.</p>
-        </div>
-      </div>
-    </details>
-  </section>
-
-</main>
+<input type="file" id="fileInput" multiple hidden>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="tdweb.js"></script>
 <script>
 (() => {
 "use strict";
-/* ==========================================================================
-   Telegram Vault (TDLib build)
+/* Telegram Vault — TDLib build. Storage is your own Saved Messages.
+   tdweb.js, both workers and the .wasm must stay beside index.html:
+   webpack publicPath is "", so paths resolve against the document. */
 
-   Storage is your own Saved Messages, reached over MTProto through TDLib
-   compiled to WebAssembly (tdweb 1.8.40, vendored beside this file).
+const KEYS_LS="vault.keys.v1", IDX_LS="vault.idxcache.v1", UI_LS="vault.ui.v1";
+const IDX_NAME="vault-index.json";
+const READ_PART=32*1024*1024;
+let BIG_PREVIEW=300*1024*1024;
+const THUMB_CAP=6000;
 
-   Why this shape:
-   - tdweb.js is a UMD bundle exposing window.tdweb, and its webpack
-     publicPath is "", so tdweb.js, both .worker.js files and the .wasm MUST
-     sit in the same directory as index.html. Do not move them.
-   - Files go up as inputFileBlob, a tdweb extension that hands a browser
-     File straight to TDLib. 2 GB per file, 4 GB with Premium. No chunking.
-   - The index is a pinned vault-index.json in Saved Messages, so any device
-     you sign in on rebuilds this view on its own.
-   ========================================================================== */
+const $=(id)=>document.getElementById(id);
+const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+const uid=()=>crypto.randomUUID?crypto.randomUUID():"id-"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+const lsGet=(k)=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(_){return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
+const esc=(s)=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const errText=(e)=>(e&&(e.message||e.description))?(e.message||e.description):(typeof e==="string"?e:"Something went wrong");
 
-const KEYS_LS = "vault.keys.v1";
-const IDX_LS  = "vault.idxcache.v1";
-const IDX_NAME = "vault-index.json";
-const READ_PART = 32 * 1024 * 1024;
-
-const $ = (id) => document.getElementById(id);
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const uid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
-const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (_) { return null; } };
-const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} };
-
-function fmt(b) {
-  if (b == null || isNaN(b)) return "—";
-  if (b < 1024) return b + " B";
-  const u = ["KB","MB","GB","TB"]; let i = -1, n = b;
-  do { n /= 1024; i++; } while (n >= 1024 && i < u.length - 1);
-  return (n < 10 ? n.toFixed(1) : Math.round(n)) + " " + u[i];
+function fmt(b){
+  if(b==null||isNaN(b))return "—";
+  if(b<1024)return b+" B";
+  const u=["KB","MB","GB","TB"];let i=-1,n=b;
+  do{n/=1024;i++}while(n>=1024&&i<u.length-1);
+  return (n<10?n.toFixed(1):Math.round(n))+" "+u[i];
 }
-function splitSize(b) {
-  const s = fmt(b); const i = s.lastIndexOf(" ");
-  return i < 0 ? [s, ""] : [s.slice(0, i), s.slice(i + 1)];
-}
-function when(ts) {
-  const d = new Date(ts), n = new Date();
-  return d.toLocaleDateString(undefined, { day:"numeric", month:"short", ...(d.getFullYear()===n.getFullYear()?{}:{year:"numeric"}) });
-}
-const extOf = (n) => { const m = /\.([A-Za-z0-9]{1,5})$/.exec(n || ""); return m ? m[1].slice(0,4) : "?"; };
-const esc = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const errText = (e) => (e && (e.message || e.description)) ? (e.message || e.description) : (typeof e === "string" ? e : "Something went wrong");
-
-/* --------------------------------------------------------------- state */
-let keys = lsGet(KEYS_LS);
-let client = null, me = null, savedChatId = null;
-let idx = { v:2, updatedAt:0, folders:[], files:[] };
-let idxMessageId = null, idxDirty = false, idxTimer = null;
-let cwd = "/";
-const sel = new Set();
-let authState = "", connState = "";
-
-/* ------------------------------------------------------------- screens */
-const SCREENS = ["booting","scrKeys","scrPhone","scrCode","scrPass","scrVault"];
-function screen(which) {
-  for (const s of SCREENS) $(s).hidden = s !== which;
-  $("logoutBtn").hidden = which !== "scrVault";
-  $("usage").hidden = which !== "scrVault";
-}
-const bootMsg = (t) => { $("bootMsg").textContent = t; };
-let toastT = null;
-function toast(m, ms = 5000) {
-  const el = $("toast"); el.textContent = m; el.classList.add("show");
-  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), ms);
-}
-function say(id, text, kind) {
-  const el = $(id);
-  if (!text) { el.className = "msg"; el.textContent = ""; return; }
-  el.textContent = text; el.className = "msg show " + (kind || "");
-}
-function meChip() {
-  const c = $("meChip");
-  if (!me) { c.textContent = connState === "connectionStateReady" ? "signed out" : "connecting…"; c.className = "chip off"; return; }
-  const nm = [me.first_name, me.last_name].filter(Boolean).join(" ") || (me.usernames && me.usernames.editable_username) || "signed in";
-  const busy = connState && connState !== "connectionStateReady";
-  c.textContent = busy ? "connecting…" : nm;
-  c.className = busy ? "chip off" : "chip";
+function when(ts){
+  const d=new Date(ts),n=new Date();
+  const sameDay=d.toDateString()===n.toDateString();
+  if(sameDay)return d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+  return d.toLocaleDateString(undefined,{day:"numeric",month:"short",...(d.getFullYear()===n.getFullYear()?{}:{year:"numeric"})});
 }
 
-/* ============================== TDLib boot ============================= */
-async function boot() {
-  if (!keys || !keys.apiId || !keys.apiHash) { screen("scrKeys"); return; }
-  screen("booting"); bootMsg("Starting TDLib… the first load fetches about 12 MB.");
-  const TdClient = window.tdweb && (window.tdweb.default || window.tdweb);
-  if (typeof TdClient !== "function") {
-    bootMsg("tdweb.js didn't load. All four TDLib files must sit next to index.html.");
-    return;
-  }
-  try {
-    client = new TdClient({
-      instanceName: "vault",
-      mode: "wasm",
-      jsLogVerbosityLevel: "error",
-      logVerbosityLevel: 1,
-      useDatabase: true,
-      readOnly: false,
-      isBackground: false,
-      onUpdate: onUpdate
-    });
-    client.onUpdate = onUpdate;
-  } catch (e) {
-    bootMsg("TDLib wouldn't start: " + errText(e));
-  }
+/* ------------------------------- icons -------------------------------- */
+const P={
+  folder:"M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z",
+  image:"M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z",
+  video:"M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z",
+  audio:"M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z",
+  pdf:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM8 15h1.5v1.5H8V18H6.5v-6H8v3zm4.5 3H11v-6h1.5c1.1 0 2 .9 2 2v2c0 1.1-.9 2-2 2zm5-4.5H16v1h1.5V16H16v2h-1.5v-6h3v1.5z",
+  zip:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 12h-2v2h2v2h-2v2h-2v-2h2v-2h-2v-2h2v-2h-2v-2h2v2h2v2zm0-5V3.5L18.5 9H13z",
+  doc:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
+  file:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z",
+  play:"M8 5v14l11-7z",
+  dl:"M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z",
+  trash:"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z",
+  eye:"M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
+  up:"M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z",
+  newfolder:"M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z"
+};
+const KCOL={folder:"--t-folder",image:"--t-image",video:"--t-video",audio:"--t-audio",pdf:"--t-pdf",zip:"--t-zip",doc:"--t-doc",file:"--t-file"};
+const ico=(k,cls)=>`<svg class="${cls||"ico"}" viewBox="0 0 24 24" fill="currentColor" style="color:var(${KCOL[k]||"--t-file"})" aria-hidden="true"><path d="${P[k]||P.file}"/></svg>`;
+const plainIco=(k,cls)=>`<svg class="${cls||"ico"}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${P[k]||P.file}"/></svg>`;
+
+function kindOf(rec){
+  const m=(rec.mime||"").toLowerCase(), n=(rec.name||"").toLowerCase();
+  const ex=(n.match(/\.([a-z0-9]+)$/)||[,""])[1];
+  if(m.startsWith("image/")||["jpg","jpeg","png","gif","webp","avif","bmp","svg","heic","heif"].includes(ex))return "image";
+  if(m.startsWith("video/")||["mp4","webm","mkv","mov","avi","m4v","3gp"].includes(ex))return "video";
+  if(m.startsWith("audio/")||["mp3","wav","ogg","oga","m4a","flac","aac","opus"].includes(ex))return "audio";
+  if(m==="application/pdf"||ex==="pdf")return "pdf";
+  if(["zip","rar","7z","tar","gz","bz2","xz"].includes(ex))return "zip";
+  if(["doc","docx","txt","md","rtf","odt","csv","xls","xlsx","ppt","pptx"].includes(ex))return "doc";
+  return "file";
+}
+const CAN_PREVIEW={image:1,video:1,audio:1,pdf:1};
+
+/* -------------------------------- state ------------------------------- */
+let keys=lsGet(KEYS_LS);
+const ui=Object.assign({mode:"list",sort:"new"},lsGet(UI_LS)||{});
+let client=null,me=null,savedChatId=null;
+let idx={v:2,updatedAt:0,folders:[],files:[]};
+let idxMessageId=null,idxDirty=false,idxTimer=null;
+let cwd="/",navView="mine",query="";
+const sel=new Set();
+let authState="",connState="";
+
+const SCREENS=["booting","scrKeys","scrPhone","scrCode","scrPass","scrVault"];
+function screen(w){ for(const s of SCREENS) $(s).hidden = s!==w; }
+const bootMsg=(t)=>{$("bootMsg").textContent=t};
+let toastT=null;
+function toast(m,ms=5000){const e=$("toast");e.textContent=m;e.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove("show"),ms)}
+function say(id,text,kind){const e=$(id);if(!text){e.className="msg";e.textContent="";return}e.textContent=text;e.className="msg show "+(kind||"")}
+function paintMe(){
+  const nm=me?([me.first_name,me.last_name].filter(Boolean).join(" ")||"You"):"";
+  $("avatar").textContent=nm?nm.trim()[0].toUpperCase():"?";
+  $("avatar").title=nm||"Not signed in";
 }
 
-function onUpdate(u) {
-  const t = u["@type"];
-  if (t === "updateAuthorizationState") { onAuth(u.authorization_state); return; }
-  if (t === "updateFile") { fileTick(u.file); return; }
-  if (t === "updateMessageSendSucceeded") { sendResolve(u.old_message_id, u.message); return; }
-  if (t === "updateMessageSendFailed") { sendReject(u.old_message_id, u.error); return; }
-  if (t === "updateConnectionState") { connState = u.state["@type"]; meChip(); return; }
+/* ============================== TDLib ================================= */
+async function boot(){
+  if(!keys||!keys.apiId||!keys.apiHash){screen("scrKeys");return}
+  screen("booting");bootMsg("Starting… the first load fetches about 12 MB.");
+  const TdClient=window.tdweb&&(window.tdweb.default||window.tdweb);
+  if(typeof TdClient!=="function"){bootMsg("tdweb.js didn't load. All four TDLib files must sit next to index.html.");return}
+  try{
+    client=new TdClient({instanceName:"vault",mode:"wasm",jsLogVerbosityLevel:"error",
+      logVerbosityLevel:1,useDatabase:true,readOnly:false,isBackground:false,onUpdate});
+    client.onUpdate=onUpdate;
+  }catch(e){bootMsg("TDLib wouldn't start: "+errText(e))}
 }
-
-async function setParams() {
-  const flat = {
-    "@type": "setTdlibParameters",
-    use_test_dc: false,
-    database_directory: "/db",
-    files_directory: "/files",
-    database_encryption_key: "",
-    use_file_database: true,
-    use_chat_info_database: true,
-    use_message_database: true,
-    use_secret_chats: false,
-    api_id: Number(keys.apiId),
-    api_hash: String(keys.apiHash),
-    system_language_code: navigator.language || "en",
-    device_model: "Web",
-    system_version: "",
-    application_version: "vault-1.0"
-  };
-  try {
-    await client.send(flat);
-  } catch (e) {
-    // Older TDLib builds nest the parameters and want a separate key check.
-    const { "@type": _drop, ...rest } = flat;
-    await client.send({ "@type": "setTdlibParameters",
-      parameters: { ...rest, enable_storage_optimizer: true, ignore_file_names: false } });
+function onUpdate(u){
+  const t=u["@type"];
+  if(t==="updateAuthorizationState")return onAuth(u.authorization_state);
+  if(t==="updateFile")return fileTick(u.file);
+  if(t==="updateMessageSendSucceeded")return sendResolve(u.old_message_id,u.message);
+  if(t==="updateMessageSendFailed")return sendReject(u.old_message_id,u.error);
+  if(t==="updateConnectionState"){connState=u.state["@type"];}
+}
+async function setParams(){
+  const flat={"@type":"setTdlibParameters",use_test_dc:false,database_directory:"/db",
+    files_directory:"/files",database_encryption_key:"",use_file_database:true,
+    use_chat_info_database:true,use_message_database:true,use_secret_chats:false,
+    api_id:Number(keys.apiId),api_hash:String(keys.apiHash),
+    system_language_code:navigator.language||"en",device_model:"Web",system_version:"",application_version:"vault-1.0"};
+  try{ await client.send(flat); }
+  catch(e){
+    const {"@type":_d,...rest}=flat;
+    await client.send({"@type":"setTdlibParameters",parameters:{...rest,enable_storage_optimizer:true,ignore_file_names:false}});
   }
 }
-
-async function onAuth(st) {
-  authState = st["@type"];
-  try {
-    switch (authState) {
-      case "authorizationStateWaitTdlibParameters":
-        await setParams(); break;
-      case "authorizationStateWaitEncryptionKey":
-        await client.send({ "@type": "checkDatabaseEncryptionKey", encryption_key: "" }); break;
-      case "authorizationStateWaitPhoneNumber":
-        me = null; meChip(); screen("scrPhone"); break;
-      case "authorizationStateWaitCode": {
-        const ci = st.code_info || {};
-        const tt = (ci.type && ci.type["@type"]) || "";
-        $("codeHint").textContent =
-          tt === "authenticationCodeTypeSms" ? `Telegram texted a code to ${ci.phone_number || "your phone"}.`
-          : tt === "authenticationCodeTypeCall" ? "Telegram is calling you with a code."
-          : `Check your other Telegram app for a login code${ci.phone_number ? " sent to " + ci.phone_number : ""}.`;
-        screen("scrCode"); say("mCode", "", ""); break;
+async function onAuth(st){
+  authState=st["@type"];
+  try{
+    switch(authState){
+      case "authorizationStateWaitTdlibParameters": await setParams(); break;
+      case "authorizationStateWaitEncryptionKey": await client.send({"@type":"checkDatabaseEncryptionKey",encryption_key:""}); break;
+      case "authorizationStateWaitPhoneNumber": me=null;paintMe();screen("scrPhone"); break;
+      case "authorizationStateWaitCode":{
+        const ci=st.code_info||{},tt=(ci.type&&ci.type["@type"])||"";
+        $("codeHint").textContent = tt==="authenticationCodeTypeSms"
+          ? `Texted to ${ci.phone_number||"your phone"}.`
+          : `Check your Telegram app${ci.phone_number?" for "+ci.phone_number:""}.`;
+        screen("scrCode");say("mCode","","");break;
       }
-      case "authorizationStateWaitPassword": {
-        const h = st.password_hint;
-        $("passHint").textContent = h ? `This account has two-step verification. Hint: ${h}` : "This account has two-step verification enabled.";
-        screen("scrPass"); say("mPass", "", ""); break;
-      }
+      case "authorizationStateWaitPassword":
+        $("passHint").textContent=st.password_hint?`Hint: ${st.password_hint}`:"This account has a password.";
+        screen("scrPass");say("mPass","","");break;
       case "authorizationStateWaitRegistration":
-        screen("scrPhone");
-        say("mPhone", "That number has no Telegram account yet. Sign up in the Telegram app first, then come back.", "bad");
-        break;
-      case "authorizationStateReady":
-        await onReady(); break;
-      case "authorizationStateClosed":
-        me = null; meChip(); screen("scrKeys"); break;
+        screen("scrPhone");say("mPhone","That number has no Telegram account yet.","bad");break;
+      case "authorizationStateReady": await onReady(); break;
+      case "authorizationStateClosed": me=null;paintMe();screen("scrKeys"); break;
     }
-  } catch (e) {
-    const m = errText(e);
-    if (authState === "authorizationStateWaitTdlibParameters") bootMsg("TDLib rejected the API keys: " + m);
-    else toast(m);
+  }catch(e){
+    if(authState==="authorizationStateWaitTdlibParameters")bootMsg("TDLib rejected the API keys: "+errText(e));
+    else toast(errText(e));
   }
 }
-
-async function onReady() {
-  screen("booting"); bootMsg("Opening your Saved Messages…");
-  me = await client.send({ "@type": "getMe" });
-  meChip();
-  const chat = await client.send({ "@type": "createPrivateChat", user_id: me.id, force: true });
-  savedChatId = chat.id;
-
-  const cached = lsGet(IDX_LS);
-  if (cached && Array.isArray(cached.files)) idx = normalize(cached);
-  screen("scrVault"); render();
-  bootMsg("");
-
-  try { await loadIndex(); }
-  catch (e) { toast("Couldn't read the index from Telegram: " + errText(e)); }
+async function onReady(){
+  screen("booting");bootMsg("Opening your Saved Messages…");
+  me=await client.send({"@type":"getMe"});paintMe();
+  savedChatId=(await client.send({"@type":"createPrivateChat",user_id:me.id,force:true})).id;
+  const cached=lsGet(IDX_LS);
+  if(cached&&Array.isArray(cached.files))idx=normalize(cached);
+  screen("scrVault");render();
+  try{ await loadIndex(); }catch(e){ toast("Couldn't read the index from Telegram: "+errText(e)); }
+}
+function normalize(d){
+  return {v:2,updatedAt:d.updatedAt||0,
+    folders:Array.isArray(d.folders)?d.folders.filter(x=>typeof x==="string"&&x.startsWith("/")):[],
+    files:(Array.isArray(d.files)?d.files:[]).filter(f=>f&&f.id&&f.name).map(f=>({
+      id:f.id,name:f.name,path:f.path&&f.path.startsWith("/")?f.path:"/",
+      size:Number(f.size)||0,mime:f.mime||"application/octet-stream",
+      remoteId:f.remoteId||null,messageId:f.messageId||null,createdAt:f.createdAt||Date.now(),
+      thumb:typeof f.thumb==="string"&&f.thumb.length<THUMB_CAP?f.thumb:null}))};
 }
 
-function normalize(d) {
-  return {
-    v: 2, updatedAt: d.updatedAt || 0,
-    folders: Array.isArray(d.folders) ? d.folders.filter(x => typeof x === "string" && x.startsWith("/")) : [],
-    files: (Array.isArray(d.files) ? d.files : []).filter(f => f && f.id && f.name).map(f => ({
-      id: f.id, name: f.name, path: f.path && f.path.startsWith("/") ? f.path : "/",
-      size: Number(f.size) || 0, mime: f.mime || "application/octet-stream",
-      remoteId: f.remoteId || null, messageId: f.messageId || null, createdAt: f.createdAt || Date.now()
-    }))
-  };
-}
-
-/* ============================ auth screens ============================= */
-$("keysBtn").onclick = () => {
-  const id = $("apiId").value.trim(), hash = $("apiHash").value.trim();
-  if (!/^\d{4,12}$/.test(id)) return say("mKeys", "api_id should be a number, roughly 6–8 digits.", "bad");
-  if (!/^[a-f0-9]{32}$/i.test(hash)) return say("mKeys", "api_hash should be 32 hex characters.", "bad");
-  keys = { apiId: id, apiHash: hash };
-  lsSet(KEYS_LS, keys);
-  say("mKeys", "Saved. Starting TDLib…", "ok");
-  boot();
+/* ============================== auth UI =============================== */
+$("keysBtn").onclick=()=>{
+  const id=$("apiId").value.trim(),hash=$("apiHash").value.trim();
+  if(!/^\d{4,12}$/.test(id))return say("mKeys","api_id should be a number, roughly 6–8 digits.","bad");
+  if(!/^[a-f0-9]{32}$/i.test(hash))return say("mKeys","api_hash should be 32 hex characters.","bad");
+  keys={apiId:id,apiHash:hash};lsSet(KEYS_LS,keys);say("mKeys","","");boot();
 };
-$("editKeysBtn").onclick = () => { if (keys) { $("apiId").value = keys.apiId; $("apiHash").value = keys.apiHash; } screen("scrKeys"); };
-
-$("phoneBtn").onclick = async () => {
-  const p = $("phone").value.trim().replace(/[\s()-]/g, "");
-  if (!/^\+?\d{7,15}$/.test(p)) return say("mPhone", "Enter the number with its country code, like +919876543210.", "bad");
-  $("phoneBtn").disabled = true; say("mPhone", "Asking Telegram for a code…", "");
-  try { await client.send({ "@type": "setAuthenticationPhoneNumber", phone_number: p }); }
-  catch (e) { say("mPhone", errText(e), "bad"); }
-  finally { $("phoneBtn").disabled = false; }
+$("editKeysBtn").onclick=()=>{if(keys){$("apiId").value=keys.apiId;$("apiHash").value=keys.apiHash}screen("scrKeys")};
+$("phoneBtn").onclick=async()=>{
+  const p=$("phone").value.trim().replace(/[\s()-]/g,"");
+  if(!/^\+?\d{7,15}$/.test(p))return say("mPhone","Enter the number with its country code, like +919876543210.","bad");
+  $("phoneBtn").disabled=true;say("mPhone","","");
+  try{ await client.send({"@type":"setAuthenticationPhoneNumber",phone_number:p}); }
+  catch(e){ say("mPhone",errText(e),"bad"); }
+  finally{ $("phoneBtn").disabled=false; }
 };
-$("phone").addEventListener("keydown", e => { if (e.key === "Enter") $("phoneBtn").click(); });
-
-$("codeBtn").onclick = async () => {
-  const c = $("code").value.trim();
-  if (!/^\d{4,6}$/.test(c)) return say("mCode", "The code is 5 digits.", "bad");
-  $("codeBtn").disabled = true; say("mCode", "Checking…", "");
-  try { await client.send({ "@type": "checkAuthenticationCode", code: c }); }
-  catch (e) {
-    const m = errText(e);
-    say("mCode", /PHONE_CODE_INVALID|invalid/i.test(m) ? "That code isn't right. Check the newest message." : m, "bad");
-  } finally { $("codeBtn").disabled = false; }
+$("codeBtn").onclick=async()=>{
+  const c=$("code").value.trim();
+  if(!/^\d{4,6}$/.test(c))return say("mCode","The code is 5 digits.","bad");
+  $("codeBtn").disabled=true;say("mCode","","");
+  try{ await client.send({"@type":"checkAuthenticationCode",code:c}); }
+  catch(e){ const m=errText(e); say("mCode",/PHONE_CODE_INVALID|invalid/i.test(m)?"That code isn't right.":m,"bad"); }
+  finally{ $("codeBtn").disabled=false; }
 };
-$("code").addEventListener("keydown", e => { if (e.key === "Enter") $("codeBtn").click(); });
-$("backPhoneBtn").onclick = () => { $("code").value = ""; screen("scrPhone"); };
-
-$("passBtn").onclick = async () => {
-  const p = $("pass").value;
-  if (!p) return say("mPass", "Enter your two-step verification password.", "bad");
-  $("passBtn").disabled = true; say("mPass", "Checking…", "");
-  try { await client.send({ "@type": "checkAuthenticationPassword", password: p }); $("pass").value = ""; }
-  catch (e) {
-    const m = errText(e);
-    say("mPass", /PASSWORD_HASH_INVALID|invalid/i.test(m) ? "That password isn't right." : m, "bad");
-  } finally { $("passBtn").disabled = false; }
+$("passBtn").onclick=async()=>{
+  const p=$("pass").value;
+  if(!p)return say("mPass","Enter your password.","bad");
+  $("passBtn").disabled=true;say("mPass","","");
+  try{ await client.send({"@type":"checkAuthenticationPassword",password:p});$("pass").value=""; }
+  catch(e){ const m=errText(e); say("mPass",/PASSWORD_HASH_INVALID|invalid/i.test(m)?"That password isn't right.":m,"bad"); }
+  finally{ $("passBtn").disabled=false; }
 };
-$("pass").addEventListener("keydown", e => { if (e.key === "Enter") $("passBtn").click(); });
-
-$("logoutBtn").onclick = async () => {
-  if (queue.length || running) { if (!confirm("Transfers are still running. Log out anyway?")) return; }
-  try { await client.send({ "@type": "logOut" }); } catch (_) {}
-  me = null; meChip(); screen("scrPhone");
-  toast("Signed out of this browser. Everything in Saved Messages is untouched.");
-};
-$("wipeBtn").onclick = async () => {
-  if (!confirm("Log out and delete the local TDLib database from this browser?\n\nYour files and the index stay in Saved Messages.")) return;
-  try { await client.send({ "@type": "logOut" }); } catch (_) {}
-  try { await client.send({ "@type": "close" }); } catch (_) {}
+["phone","code","pass"].forEach(id=>$(id).addEventListener("keydown",e=>{
+  if(e.key==="Enter")$({phone:"phoneBtn",code:"codeBtn",pass:"passBtn"}[id]).click();
+}));
+$("logoutBtn").onclick=async()=>{
+  if(!confirm("Sign out of this browser?\n\nYour files and index stay in Saved Messages."))return;
+  try{ await client.send({"@type":"logOut"}); }catch(_){}
   localStorage.removeItem(IDX_LS);
-  for (const n of ["/tdlib", "tdlib", "vault", "keyval-store", "tdweb"]) { try { indexedDB.deleteDatabase(n); } catch (_) {} }
-  toast("Wiped. Reloading…");
-  setTimeout(() => location.reload(), 1200);
+  me=null;paintMe();screen("scrPhone");
 };
 
-/* ======================= file transfer plumbing ======================== */
-const watchers = new Map();               // tdlib file id -> callback
-const watchFile = (id, cb) => watchers.set(id, cb);
-const unwatchFile = (id) => watchers.delete(id);
-function fileTick(f) { const cb = watchers.get(f.id); if (cb) { try { cb(f); } catch (_) {} } }
+/* ========================== transfer plumbing ========================= */
+const watchers=new Map();
+const watchFile=(id,cb)=>watchers.set(id,cb);
+const unwatchFile=(id)=>watchers.delete(id);
+function fileTick(f){const cb=watchers.get(f.id);if(cb){try{cb(f)}catch(_){}}}
+const sends=new Map();
+const waitSend=(t)=>new Promise((res,rej)=>sends.set(t,{res,rej}));
+function sendResolve(o,m){const h=sends.get(o);if(h){sends.delete(o);h.res(m)}}
+function sendReject(o,e){const h=sends.get(o);if(h){sends.delete(o);h.rej(new Error(errText(e)))}}
+const docOf=(m)=>(m&&m.content&&m.content.document)||null;
 
-const sends = new Map();                  // temp message id -> {res, rej}
-function waitSend(tempId) {
-  return new Promise((res, rej) => sends.set(tempId, { res, rej }));
-}
-function sendResolve(oldId, message) { const h = sends.get(oldId); if (h) { sends.delete(oldId); h.res(message); } }
-function sendReject(oldId, err) { const h = sends.get(oldId); if (h) { sends.delete(oldId); h.rej(new Error(errText(err))); } }
-
-const docOf = (m) => (m && m.content && m.content.document) || null;
-
-/* Read a downloaded TDLib file out of the browser filesystem.
-   Big files are pulled in parts so a 2 GB video never sits in one buffer. */
-async function readOut(fileId, size, sink) {
-  if (size > READ_PART) {
-    let usedParts = false;
-    try {
-      for (let off = 0; off < size; off += READ_PART) {
-        const count = Math.min(READ_PART, size - off);
-        const r = await client.send({ "@type": "readFilePart", file_id: fileId, offset: off, count });
-        if (!r || !r.data) throw new Error("no data in part");
-        await sink(r.data);
-        usedParts = true;
+async function readOut(fileId,size,sink){
+  if(size>READ_PART){
+    let used=false;
+    try{
+      for(let off=0;off<size;off+=READ_PART){
+        const count=Math.min(READ_PART,size-off);
+        const r=await client.send({"@type":"readFilePart",file_id:fileId,offset:off,count});
+        if(!r||!r.data)throw new Error("no data in part");
+        await sink(r.data);used=true;
       }
       return;
-    } catch (e) {
-      if (usedParts) throw e;          // committed to parts already; don't double-write
-    }
+    }catch(e){ if(used)throw e; }
   }
-  const r = await client.send({ "@type": "readFile", file_id: fileId });
-  if (!r || !r.data) throw new Error("TDLib downloaded the file but handed back no data.");
+  const r=await client.send({"@type":"readFile",file_id:fileId});
+  if(!r||!r.data)throw new Error("TDLib downloaded the file but handed back no data.");
   await sink(r.data);
 }
-
-function saveBlob(blob, name) {
-  const a = document.createElement("a"), url = URL.createObjectURL(blob);
-  a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 60000);
+async function pullFile(rec,onProg,sink){
+  const f=await client.send({"@type":"getRemoteFile",remote_file_id:rec.remoteId,file_type:{"@type":"fileTypeDocument"}});
+  const fileId=f.id;
+  if(onProg)watchFile(fileId,fo=>{const d=(fo.local&&fo.local.downloaded_size)||0;onProg(d/Math.max(1,rec.size))});
+  try{
+    await client.send({"@type":"downloadFile",file_id:fileId,priority:1,offset:0,limit:0,synchronous:true});
+    unwatchFile(fileId);
+    await readOut(fileId,rec.size,sink);
+  } finally {
+    unwatchFile(fileId);
+    try{ await client.send({"@type":"deleteFile",file_id:fileId}); }catch(_){}
+  }
+}
+function saveBlob(blob,name){
+  const a=document.createElement("a"),url=URL.createObjectURL(blob);
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
 
-/* =============================== queue ================================= */
-const queue = [];
-let running = false;
-function enqueue(fn) { queue.push(fn); qSummary(); pump(); }
-async function pump() {
-  if (running) return;
-  running = true;
-  while (queue.length) { const t = queue.shift(); qSummary(); try { await t(); } catch (_) {} }
-  running = false; qSummary();
+/* =============================== queue ================================ */
+const queue=[];let running=false;
+function enqueue(fn){queue.push(fn);tHead();pump()}
+async function pump(){
+  if(running)return;running=true;
+  while(queue.length){const t=queue.shift();tHead();try{await t()}catch(_){}}
+  running=false;tHead();
 }
-function qSummary() {
-  const rows = $("xfer").children.length;
-  $("qCard").hidden = rows === 0;
-  $("qSum").textContent = queue.length ? `${queue.length} waiting` : (running ? "working…" : "");
+function tHead(){
+  const n=$("tbody").children.length;
+  $("tpanel").hidden=n===0;
+  const live=queue.length+(running?1:0);
+  $("tTitle").textContent=live?`${live} in progress`:(n?"Transfers complete":"Transfers");
 }
-function qRow(name, dir, total) {
-  const el = document.createElement("div");
-  el.className = "xrow wait " + dir;
-  el.innerHTML = `
-    <div class="xtop">
-      <span class="dir">${dir === "up" ? "up" : "down"}</span>
-      <span class="xname">${esc(name)}</span>
-      <span class="xstat">waiting</span>
-    </div>
-    <div class="bar"><i></i></div>
-    <div class="xerr" hidden></div>`;
-  $("xfer").prepend(el);
-  qSummary();
+const RING=2*Math.PI*9.5;
+function tRow(name,dir,kind){
+  const el=document.createElement("div");
+  el.className="trow";
+  el.innerHTML=`${ico(kind)}
+    <div><div class="n">${esc(name)}</div><div class="s">${dir==="up"?"Waiting to upload":"Waiting to download"}</div></div>
+    <svg class="ring" viewBox="0 0 24 24"><circle class="bgc" cx="12" cy="12" r="9.5"/><circle class="fg" cx="12" cy="12" r="9.5" stroke-dasharray="${RING}" stroke-dashoffset="${RING}"/></svg>`;
+  $("tbody").prepend(el);tHead();
+  const fg=el.querySelector(".fg"),sub=el.querySelector(".s");
   return {
     el,
-    start() { el.classList.remove("wait"); el.querySelector(".xstat").textContent = "starting…"; },
-    set(p, t) {
-      el.classList.remove("wait");
-      el.querySelector(".bar i").style.width = Math.max(0, Math.min(100, p * 100)) + "%";
-      if (t) el.querySelector(".xstat").textContent = t;
-    },
-    fail(t) {
-      el.classList.add("err"); el.querySelector(".xstat").textContent = "failed";
-      const e = el.querySelector(".xerr"); e.textContent = t; e.hidden = false;
-    },
-    done() { el.dataset.finished = "1"; setTimeout(() => { el.remove(); qSummary(); }, 2500); }
+    set(p,txt){fg.setAttribute("stroke-dashoffset",String(RING*(1-Math.max(0,Math.min(1,p)))));if(txt)sub.textContent=txt},
+    fail(t){el.classList.add("err");sub.textContent=t;el.querySelector(".ring").outerHTML=`<span class="pct">failed</span>`},
+    done(txt){el.querySelector(".ring").outerHTML=`<svg class="tdone" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`;sub.textContent=txt||"Done";el.dataset.done="1"}
   };
 }
-$("qClearBtn").onclick = () => {
-  [...$("xfer").children].forEach(c => { if (c.dataset.finished || c.classList.contains("err")) c.remove(); });
-  qSummary();
-};
+$("tClear").onclick=()=>{[...$("tbody").children].forEach(c=>{if(c.dataset.done||c.classList.contains("err"))c.remove()});tHead()};
 
-/* =============================== upload ================================ */
-function queueUpload(file, path) {
-  const row = qRow(file.name, "up", file.size);
-  enqueue(async () => {
-    row.start();
-    try {
-      const content = {
-        "@type": "inputMessageDocument",
-        document: { "@type": "inputFileBlob", name: file.name, data: file },
-        disable_content_type_detection: true,
-        caption: { "@type": "formattedText", entities: [],
-          text: `${file.name}\n${fmt(file.size)}${path !== "/" ? "\n" + path : ""}` }
-      };
-      const provisional = await client.send({ "@type": "sendMessage", chat_id: savedChatId, input_message_content: content });
-      const d0 = docOf(provisional);
-      const localId = d0 && d0.document && d0.document.id;
-      if (localId != null) watchFile(localId, f => {
-        const up = (f.remote && f.remote.uploaded_size) || 0;
-        row.set(up / Math.max(1, file.size), `${fmt(up)} of ${fmt(file.size)}`);
+/* =============================== upload =============================== */
+function queueUpload(file,path){
+  const rec0={name:file.name,mime:file.type||"application/octet-stream"};
+  const row=tRow(file.name,"up",kindOf(rec0));
+  enqueue(async()=>{
+    row.set(0,"Uploading…");
+    try{
+      const provisional=await client.send({"@type":"sendMessage",chat_id:savedChatId,input_message_content:{
+        "@type":"inputMessageDocument",
+        document:{"@type":"inputFileBlob",name:file.name,data:file},
+        disable_content_type_detection:true,
+        caption:{"@type":"formattedText",entities:[],text:`${file.name}\n${fmt(file.size)}${path!=="/"?"\n"+path:""}`}}});
+      const d0=docOf(provisional);
+      const localId=d0&&d0.document&&d0.document.id;
+      if(localId!=null)watchFile(localId,f=>{
+        const up=(f.remote&&f.remote.uploaded_size)||0;
+        row.set(up/Math.max(1,file.size),`${fmt(up)} of ${fmt(file.size)}`);
       });
-
-      const final = await waitSend(provisional.id);
-      if (localId != null) unwatchFile(localId);
-
-      const doc = docOf(final);
-      if (!doc || !doc.document || !doc.document.remote || !doc.document.remote.id) {
-        throw new Error("Telegram stored the file but returned no reference for it.");
-      }
-      idx.files.push({
-        id: uid(), name: file.name, path, size: doc.document.size || file.size,
-        mime: file.type || "application/octet-stream",
-        remoteId: doc.document.remote.id, messageId: final.id, createdAt: Date.now()
-      });
+      const final=await waitSend(provisional.id);
+      if(localId!=null)unwatchFile(localId);
+      const doc=docOf(final);
+      if(!doc||!doc.document||!doc.document.remote||!doc.document.remote.id)
+        throw new Error("Telegram stored the file but returned no reference.");
+      let thumb=null;
+      const mt=doc.minithumbnail;
+      if(mt&&typeof mt.data==="string"&&mt.data.length<THUMB_CAP)thumb=mt.data;
+      idx.files.push({id:uid(),name:file.name,path,size:doc.document.size||file.size,
+        mime:file.type||"application/octet-stream",remoteId:doc.document.remote.id,
+        messageId:final.id,createdAt:Date.now(),thumb});
       touchIdx();
-      row.set(1, "done"); row.done();
-    } catch (e) {
+      row.done(fmt(file.size));
+    }catch(e){ row.fail(errText(e)); }
+  });
+}
+
+/* ============================== download ============================== */
+function queueDownload(rec){
+  const row=tRow(rec.name,"dn",kindOf(rec));
+  enqueue(async()=>{
+    row.set(0,"Downloading…");
+    let writable=null;
+    try{
+      if(window.showSaveFilePicker){
+        try{
+          const h=await window.showSaveFilePicker({suggestedName:rec.name});
+          writable=await h.createWritable();
+        }catch(e){ if(e&&e.name==="AbortError"){row.el.remove();tHead();return} writable=null; }
+      }
+      const parts=[];
+      await pullFile(rec,p=>row.set(p,`${fmt(p*rec.size)} of ${fmt(rec.size)}`),
+        async b=>{ if(writable)await writable.write(b); else parts.push(b); });
+      if(writable){await writable.close();writable=null}
+      else saveBlob(new Blob(parts,{type:rec.mime}),rec.name);
+      row.done(fmt(rec.size));
+    }catch(e){
+      if(writable){try{await writable.abort()}catch(_){}}
       row.fail(errText(e));
     }
   });
 }
 
-/* ============================== download =============================== */
-function queueDownload(rec) {
-  const row = qRow(rec.name, "dn", rec.size);
-  enqueue(async () => {
-    row.start();
-    let writable = null, fileId = null;
-    try {
-      if (window.showSaveFilePicker) {
-        try {
-          const h = await window.showSaveFilePicker({ suggestedName: rec.name });
-          writable = await h.createWritable();
-        } catch (e) {
-          if (e && e.name === "AbortError") { row.el.remove(); qSummary(); return; }
-          writable = null;
-        }
-      }
-      const f = await client.send({ "@type": "getRemoteFile", remote_file_id: rec.remoteId, file_type: { "@type": "fileTypeDocument" } });
-      fileId = f.id;
-      watchFile(fileId, fo => {
-        const d = (fo.local && fo.local.downloaded_size) || 0;
-        row.set(d / Math.max(1, rec.size), `${fmt(d)} of ${fmt(rec.size)}`);
-      });
-      await client.send({ "@type": "downloadFile", file_id: fileId, priority: 1, offset: 0, limit: 0, synchronous: true });
-      unwatchFile(fileId);
-
-      row.set(1, "saving…");
-      const parts = [];
-      await readOut(fileId, rec.size, async (b) => { if (writable) await writable.write(b); else parts.push(b); });
-      if (writable) { await writable.close(); writable = null; }
-      else saveBlob(new Blob(parts, { type: rec.mime }), rec.name);
-
-      row.set(1, "done"); row.done();
-    } catch (e) {
-      if (writable) { try { await writable.abort(); } catch (_) {} }
-      row.fail(errText(e));
-    } finally {
-      if (fileId != null) {
-        unwatchFile(fileId);
-        try { await client.send({ "@type": "deleteFile", file_id: fileId }); } catch (_) {}
-      }
-    }
-  });
-}
-
-/* ================================ index ================================ */
-function totalBytes() { return idx.files.reduce((a, f) => a + (f.size || 0), 0); }
-
-function touchIdx() {
-  idx.updatedAt = Date.now();
-  idxDirty = true;
-  lsSet(IDX_LS, idx);
-  render();
+/* ================================ index =============================== */
+const totalBytes=()=>idx.files.reduce((a,f)=>a+(f.size||0),0);
+function touchIdx(){
+  idx.updatedAt=Date.now();idxDirty=true;lsSet(IDX_LS,idx);render();
   clearTimeout(idxTimer);
-  idxTimer = setTimeout(() => { saveIndex().catch(e => toast("Couldn't save the index: " + errText(e))); }, 2500);
+  idxTimer=setTimeout(()=>{saveIndex().catch(e=>toast("Couldn't save the index: "+errText(e)))},2500);
 }
-
-async function saveIndex() {
-  if (!savedChatId) return;
-  const payload = JSON.stringify({ v: 2, updatedAt: Date.now(), folders: idx.folders, files: idx.files });
-  const blob = new Blob([payload], { type: "application/json" });
-  const provisional = await client.send({ "@type": "sendMessage", chat_id: savedChatId, input_message_content: {
-    "@type": "inputMessageDocument",
-    document: { "@type": "inputFileBlob", name: IDX_NAME, data: blob },
-    disable_content_type_detection: true,
-    caption: { "@type": "formattedText", entities: [],
-      text: `${IDX_NAME} · ${idx.files.length} file${idx.files.length === 1 ? "" : "s"} · ${fmt(totalBytes())}` }
-  }});
-  const final = await waitSend(provisional.id);
-  const prev = idxMessageId;
-  idxMessageId = final.id;
-  try {
-    await client.send({ "@type": "pinChatMessage", chat_id: savedChatId, message_id: final.id, disable_notification: true, only_for_self: false });
-  } catch (_) { /* pin is a convenience; the filename search still finds it */ }
-  if (prev && prev !== final.id) {
-    try { await client.send({ "@type": "deleteMessages", chat_id: savedChatId, message_ids: [prev], revoke: true }); } catch (_) {}
-  }
-  idxDirty = false;
-  lsSet(IDX_LS, idx);
-  paintIdx();
+async function saveIndex(){
+  if(!savedChatId)return;
+  const blob=new Blob([JSON.stringify({v:2,updatedAt:Date.now(),folders:idx.folders,files:idx.files})],{type:"application/json"});
+  const provisional=await client.send({"@type":"sendMessage",chat_id:savedChatId,input_message_content:{
+    "@type":"inputMessageDocument",document:{"@type":"inputFileBlob",name:IDX_NAME,data:blob},
+    disable_content_type_detection:true,
+    caption:{"@type":"formattedText",entities:[],text:`${IDX_NAME} · ${idx.files.length} files · ${fmt(totalBytes())}`}}});
+  const final=await waitSend(provisional.id);
+  const prev=idxMessageId;idxMessageId=final.id;
+  try{ await client.send({"@type":"pinChatMessage",chat_id:savedChatId,message_id:final.id,disable_notification:true,only_for_self:false}); }catch(_){}
+  if(prev&&prev!==final.id){try{ await client.send({"@type":"deleteMessages",chat_id:savedChatId,message_ids:[prev],revoke:true}) }catch(_){}}
+  idxDirty=false;lsSet(IDX_LS,idx);
 }
-
-const isIndexMsg = (m) => {
-  const d = docOf(m);
-  return !!(d && d.file_name === IDX_NAME);
-};
-
-async function loadIndex() {
-  let m = null;
-  try {
-    const chat = await client.send({ "@type": "getChat", chat_id: savedChatId });
-    if (chat && chat.pinned_message_id) {
-      try { const pin = await client.send({ "@type": "getMessage", chat_id: savedChatId, message_id: chat.pinned_message_id }); if (isIndexMsg(pin)) m = pin; } catch (_) {}
+const isIndexMsg=(m)=>{const d=docOf(m);return !!(d&&d.file_name===IDX_NAME)};
+async function loadIndex(){
+  let m=null;
+  try{
+    const chat=await client.send({"@type":"getChat",chat_id:savedChatId});
+    if(chat&&chat.pinned_message_id){
+      try{ const pin=await client.send({"@type":"getMessage",chat_id:savedChatId,message_id:chat.pinned_message_id}); if(isIndexMsg(pin))m=pin; }catch(_){}
     }
-  } catch (_) {}
-  if (!m) {
-    const r = await client.send({ "@type": "searchChatMessages", chat_id: savedChatId, query: IDX_NAME,
-      sender_id: null, from_message_id: 0, offset: 0, limit: 60,
-      filter: { "@type": "searchMessagesFilterDocument" }, message_thread_id: 0 });
-    m = ((r && r.messages) || []).find(isIndexMsg) || null;
+  }catch(_){}
+  if(!m){
+    const r=await client.send({"@type":"searchChatMessages",chat_id:savedChatId,query:IDX_NAME,
+      sender_id:null,from_message_id:0,offset:0,limit:60,
+      filter:{"@type":"searchMessagesFilterDocument"},message_thread_id:0});
+    m=((r&&r.messages)||[]).find(isIndexMsg)||null;
   }
-  if (!m) { idxMessageId = null; paintIdx(); return; }
+  if(!m){idxMessageId=null;return}
+  idxMessageId=m.id;
+  const doc=docOf(m).document;
+  let text="";
+  await pullFile({remoteId:doc.remote&&doc.remote.id,size:doc.size||0},null,async b=>{text+=await b.text()});
+  const data=JSON.parse(text);
+  if(!data||!Array.isArray(data.files))throw new Error("The pinned index isn't readable.");
+  const remote=normalize(data);
+  if(!idxDirty||(remote.updatedAt||0)>=(idx.updatedAt||0))idx=remote;
+  lsSet(IDX_LS,idx);render();
+}
 
-  idxMessageId = m.id;
-  const doc = docOf(m).document;
-  const f = doc.remote && doc.remote.id
-    ? await client.send({ "@type": "getRemoteFile", remote_file_id: doc.remote.id, file_type: { "@type": "fileTypeDocument" } })
-    : doc;
-  await client.send({ "@type": "downloadFile", file_id: f.id, priority: 32, offset: 0, limit: 0, synchronous: true });
-  let text = "";
-  await readOut(f.id, doc.size || 0, async (b) => { text += await b.text(); });
-  try { await client.send({ "@type": "deleteFile", file_id: f.id }); } catch (_) {}
+/* =============================== folders ============================== */
+const norm=(p)=>{p="/"+String(p).split("/").filter(Boolean).join("/");return p==="//"?"/":p};
+const join=(a,b)=>norm(a==="/"?"/"+b:a+"/"+b);
+function childFolders(p){
+  const pre=p==="/"?"/":p+"/";const out=new Set();
+  const add=(full)=>{if(!full.startsWith(pre)||full===p)return;const seg=full.slice(pre.length).split("/")[0];if(seg)out.add(pre+seg)};
+  idx.folders.forEach(add);idx.files.forEach(f=>add(f.path));
+  return [...out].sort((a,b)=>a.localeCompare(b));
+}
+const filesIn=(p)=>idx.files.filter(f=>f.path===p);
+function subtreeFiles(p){const pre=p==="/"?"/":p+"/";return idx.files.filter(f=>f.path===p||f.path.startsWith(pre))}
+function createFolder(){
+  const name=prompt("New folder name");
+  if(!name)return;
+  const clean=name.replace(/[\/\\]+/g,"-").trim();
+  if(!clean)return;
+  const p=join(cwd,clean);
+  if(idx.folders.includes(p)||childFolders(cwd).includes(p))return toast("There's already a folder with that name here.");
+  idx.folders.push(p);navView="mine";touchIdx();
+}
+async function deleteFolder(p){
+  const files=subtreeFiles(p),label=p.split("/").pop();
+  if(!confirm(`Delete "${label}"?\n\n${files.length} file${files.length===1?"":"s"} inside will be deleted from Saved Messages too.`))return;
+  await deleteRecords(files,true);
+  const pre=p+"/";
+  idx.folders=idx.folders.filter(f=>f!==p&&!f.startsWith(pre));
+  touchIdx();
+}
+async function deleteRecords(recs,quiet){
+  if(!recs.length)return;
+  const ids=recs.map(r=>r.messageId).filter(x=>x!=null);
+  let failed=0;
+  for(let i=0;i<ids.length;i+=100){
+    try{ await client.send({"@type":"deleteMessages",chat_id:savedChatId,message_ids:ids.slice(i,i+100),revoke:true}); }
+    catch(_){ failed+=ids.slice(i,i+100).length; }
+  }
+  const gone=new Set(recs.map(r=>r.id));
+  idx.files=idx.files.filter(f=>!gone.has(f.id));
+  recs.forEach(r=>sel.delete(r.id));
+  touchIdx();
+  if(!quiet)toast(failed?`Removed ${recs.length-failed}. ${failed} stayed in Saved Messages.`:`Deleted ${recs.length} item${recs.length===1?"":"s"}.`);
+}
 
-  const data = JSON.parse(text);
-  if (!data || !Array.isArray(data.files)) throw new Error("The pinned index isn't readable.");
-  const remote = normalize(data);
-  // A newer local state that hasn't been pushed yet wins, so an in-flight
-  // upload isn't wiped by a stale pinned copy.
-  if (!idxDirty || (remote.updatedAt || 0) >= (idx.updatedAt || 0)) idx = remote;
-  lsSet(IDX_LS, idx);
+/* =============================== preview ============================== */
+let pvList=[],pvIdx=-1;
+const pvCache=new Map();
+function pvPut(id,url){
+  pvCache.set(id,url);
+  while(pvCache.size>3){const k=pvCache.keys().next().value;URL.revokeObjectURL(pvCache.get(k));pvCache.delete(k)}
+}
+function closePreview(){
+  $("pv").hidden=true;$("pvBody").innerHTML="";
+  document.documentElement.style.overflow="";
+  pvList=[];pvIdx=-1;
+}
+function openPreview(rec){
+  const rows=currentRows().filter(r=>r.kind==="file");
+  pvList=rows.map(r=>r.rec).filter(f=>CAN_PREVIEW[kindOf(f)]);
+  pvIdx=pvList.findIndex(f=>f.id===rec.id);
+  if(pvIdx<0){pvList=[rec];pvIdx=0}
+  $("pv").hidden=false;
+  document.documentElement.style.overflow="hidden";
+  showPreview();
+}
+function pvStep(d){ if(pvList.length<2)return; pvIdx=(pvIdx+d+pvList.length)%pvList.length; showPreview(); }
+function noPreview(rec,msg,sub){
+  return `<div class="pv-msg">${plainIco(kindOf(rec),"")}
+    <p>${esc(msg)}</p><small>${esc(sub||fmt(rec.size))}</small>
+    <div><button class="pv-btn" data-a="dl">Download</button></div></div>`;
+}
+async function showPreview(){
+  const rec=pvList[pvIdx];if(!rec)return;
+  const body=$("pvBody"),kind=kindOf(rec);
+  $("pvName").textContent=rec.name;$("pvSize").textContent=fmt(rec.size);
+  $("pvPrev").hidden=$("pvNext").hidden=pvList.length<2;
+  const wire=()=>body.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.a==="dl"){queueDownload(rec);closePreview()}
+    if(b.dataset.a==="go"){showPreview.force=rec.id;showPreview()}
+  });
+
+  if(!CAN_PREVIEW[kind]){ body.innerHTML=noPreview(rec,"No preview for this file type"); wire(); return; }
+  if(kind==="video"&&rec.size>BIG_PREVIEW&&showPreview.force!==rec.id){
+    body.innerHTML=noPreview(rec,"This video is large",
+      `${fmt(rec.size)} — previewing downloads the whole file first.`)
+      .replace('<div><button class="pv-btn" data-a="dl">Download</button></div>',
+        '<div><button class="pv-btn" data-a="go">Preview anyway</button><button class="pv-btn alt" data-a="dl">Download</button></div>');
+    wire(); return;
+  }
+
+  const cached=pvCache.get(rec.id);
+  let url=cached;
+  if(!url){
+    body.innerHTML=`<div class="pv-msg"><p>Loading…</p><small>${esc(fmt(rec.size))}</small><div class="pvbar"><i id="pvbar"></i></div></div>`;
+    const token=rec.id;showPreview.token=token;
+    try{
+      const parts=[];
+      await pullFile(rec,p=>{const el=$("pvbar");if(el)el.style.width=(p*100)+"%"},async b=>parts.push(b));
+      if(showPreview.token!==token||$("pv").hidden)return;
+      url=URL.createObjectURL(new Blob(parts,{type:rec.mime||""}));
+      pvPut(rec.id,url);
+    }catch(e){
+      if(showPreview.token!==token)return;
+      body.innerHTML=noPreview(rec,"Couldn't load this file",errText(e));wire();return;
+    }
+  }
+  const fail=()=>{body.innerHTML=noPreview(rec,"Your browser can't play this format");wire()};
+  if(kind==="image"){
+    body.innerHTML=`<img id="pvEl" alt="${esc(rec.name)}">`;
+    const el=$("pvEl");el.onerror=fail;el.src=url;
+  }else if(kind==="video"){
+    body.innerHTML=`<video id="pvEl" controls autoplay playsinline></video>`;
+    const el=$("pvEl");el.onerror=fail;el.src=url;
+  }else if(kind==="audio"){
+    body.innerHTML=`<audio id="pvEl" controls autoplay></audio>`;
+    const el=$("pvEl");el.onerror=fail;el.src=url;
+  }else{
+    body.innerHTML=`<iframe id="pvEl" title="${esc(rec.name)}"></iframe>`;
+    $("pvEl").src=url;
+  }
+}
+$("pvClose").onclick=closePreview;
+$("pvPrev").onclick=()=>pvStep(-1);
+$("pvNext").onclick=()=>pvStep(1);
+$("pvDl").onclick=()=>{const r=pvList[pvIdx];if(r)queueDownload(r)};
+$("pv").addEventListener("click",e=>{if(e.target===$("pv")||e.target===$("pvBody"))closePreview()});
+document.addEventListener("keydown",e=>{
+  if($("pv").hidden)return;
+  if(e.key==="Escape")closePreview();
+  if(e.key==="ArrowLeft")pvStep(-1);
+  if(e.key==="ArrowRight")pvStep(1);
+});
+
+/* ================================ rows ================================ */
+function sortFiles(list){
+  const s=ui.sort;
+  return list.slice().sort((a,b)=>
+    s==="name"?a.name.localeCompare(b.name,undefined,{numeric:true}):
+    s==="big"?b.size-a.size:b.createdAt-a.createdAt);
+}
+function currentRows(){
+  if(query){
+    const q=query.toLowerCase();
+    return sortFiles(idx.files.filter(f=>f.name.toLowerCase().includes(q))).map(rec=>({kind:"file",rec}));
+  }
+  if(navView==="all")return sortFiles(idx.files).map(rec=>({kind:"file",rec}));
+  if(navView==="recent")return idx.files.slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,50).map(rec=>({kind:"file",rec}));
+  return [
+    ...childFolders(cwd).map(p=>({kind:"folder",path:p})),
+    ...sortFiles(filesIn(cwd)).map(rec=>({kind:"file",rec}))
+  ];
+}
+function openRow(r){
+  if(r.kind==="folder"){cwd=r.path;sel.clear();render();return}
+  if(CAN_PREVIEW[kindOf(r.rec)])openPreview(r.rec);
+  else queueDownload(r.rec);
+}
+function toggleSel(id,on){
+  on?sel.add(id):sel.delete(id);
   render();
 }
 
-$("saveIdxBtn").onclick = async () => {
-  say("mIdx", "Saving…", "");
-  try { await saveIndex(); say("mIdx", "Index saved and pinned in Saved Messages.", "ok"); }
-  catch (e) { say("mIdx", errText(e), "bad"); }
-};
-$("reloadIdxBtn").onclick = async () => {
-  say("mIdx", "Reading from Telegram…", "");
-  try { idxDirty = false; await loadIndex(); say("mIdx", `Loaded ${idx.files.length} file${idx.files.length === 1 ? "" : "s"}.`, "ok"); }
-  catch (e) { say("mIdx", errText(e), "bad"); }
-};
-$("exportIdxBtn").onclick = () => {
-  saveBlob(new Blob([JSON.stringify({ v:2, updatedAt: idx.updatedAt, folders: idx.folders, files: idx.files }, null, 2)], { type:"application/json" }), IDX_NAME);
-  say("mIdx", "Copy downloaded.", "ok");
-};
-function paintIdx() {
-  $("idxLine").innerHTML = idxMessageId
-    ? `Pinned in Saved Messages${idx.updatedAt ? `, last written ${new Date(idx.updatedAt).toLocaleString()}` : ""}. <b>${idx.files.length}</b> file${idx.files.length===1?"":"s"}, <b>${fmt(totalBytes())}</b>.`
-    : "Not written yet — it appears the first time you upload something.";
-  $("devLine").innerHTML = me
-    ? `Signed in as <b>${esc([me.first_name, me.last_name].filter(Boolean).join(" ") || "you")}</b>. TDLib keeps its session in this browser, so you won't be asked for a code again here.`
-    : "Not signed in.";
-}
+function render(){
+  // sidebar + storage
+  $("cntAll").textContent=idx.files.length||"";
+  $("usedVal").textContent=fmt(totalBytes());
+  const tot=totalBytes()||1;
+  const byKind={};
+  idx.files.forEach(f=>{const k=kindOf(f);byKind[k]=(byKind[k]||0)+f.size});
+  const meter=document.querySelector(".meter");
+  meter.innerHTML=Object.entries(byKind).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<i style="width:${(v/tot*100).toFixed(2)}%;background:var(${KCOL[k]||"--t-file"})"></i>`).join("");
 
-/* =============================== folders =============================== */
-const norm = (p) => { p = "/" + String(p).split("/").filter(Boolean).join("/"); return p === "//" ? "/" : p; };
-const join = (a, b) => norm(a === "/" ? "/" + b : a + "/" + b);
+  ["navMine","navAll","navRecent"].forEach(id=>$(id).classList.toggle("on",$(id).dataset.view===navView&&!query));
 
-function childFolders(p) {
-  const pre = p === "/" ? "/" : p + "/";
-  const out = new Set();
-  const add = (full) => {
-    if (!full.startsWith(pre) || full === p) return;
-    const seg = full.slice(pre.length).split("/")[0];
-    if (seg) out.add(pre + seg);
-  };
-  idx.folders.forEach(add);
-  idx.files.forEach(f => add(f.path));
-  return [...out].sort((a, b) => a.localeCompare(b));
-}
-const filesIn = (p) => idx.files.filter(f => f.path === p);
-function subtreeFiles(p) {
-  const pre = p === "/" ? "/" : p + "/";
-  return idx.files.filter(f => f.path === p || f.path.startsWith(pre));
-}
-
-$("newFolderBtn").onclick = () => {
-  const name = prompt("Folder name");
-  if (!name) return;
-  const clean = name.replace(/[\/\\]+/g, "-").trim();
-  if (!clean) return;
-  const p = join(cwd, clean);
-  if (idx.folders.includes(p) || childFolders(cwd).includes(p)) return toast("There's already a folder with that name here.");
-  idx.folders.push(p);
-  touchIdx();
-};
-
-async function deleteFolder(p) {
-  const files = subtreeFiles(p);
-  const label = p.split("/").pop();
-  if (!confirm(`Delete the folder "${label}"?\n\n${files.length} file${files.length === 1 ? "" : "s"} inside will be deleted from Saved Messages too.`)) return;
-  await deleteRecords(files, true);
-  const pre = p + "/";
-  idx.folders = idx.folders.filter(f => f !== p && !f.startsWith(pre));
-  touchIdx();
-}
-
-/* ============================ delete files ============================= */
-async function deleteRecords(recs, quiet) {
-  if (!recs.length) return;
-  const ids = recs.map(r => r.messageId).filter(x => x != null);
-  let failed = 0;
-  for (let i = 0; i < ids.length; i += 100) {
-    try { await client.send({ "@type": "deleteMessages", chat_id: savedChatId, message_ids: ids.slice(i, i + 100), revoke: true }); }
-    catch (_) { failed += ids.slice(i, i + 100).length; }
+  // breadcrumb / title
+  const cr=$("crumbs");
+  if(query){ cr.innerHTML=`<span class="here">Search results</span>`; }
+  else if(navView==="all"){ cr.innerHTML=`<span class="here">All files</span>`; }
+  else if(navView==="recent"){ cr.innerHTML=`<span class="here">Recent</span>`; }
+  else {
+    const parts=cwd==="/"?[]:cwd.split("/").filter(Boolean);
+    let acc="";const out=[parts.length?`<button data-p="/">My Vault</button>`:`<span class="here">My Vault</span>`];
+    parts.forEach((seg,i)=>{
+      acc+="/"+seg;
+      out.push(`<span class="sep">›</span>`);
+      out.push(i===parts.length-1?`<span class="here">${esc(seg)}</span>`:`<button data-p="${esc(acc)}">${esc(seg)}</button>`);
+    });
+    cr.innerHTML=out.join("");
+    cr.querySelectorAll("button").forEach(b=>b.onclick=()=>{cwd=b.dataset.p;sel.clear();render()});
   }
-  const gone = new Set(recs.map(r => r.id));
-  idx.files = idx.files.filter(f => !gone.has(f.id));
-  recs.forEach(r => sel.delete(r.id));
-  touchIdx();
-  if (!quiet) {
-    toast(failed ? `Removed ${recs.length - failed}. ${failed} couldn't be deleted from Telegram — they're out of the index but still in Saved Messages.`
-                 : `Deleted ${recs.length} file${recs.length === 1 ? "" : "s"}.`);
+
+  const rows=currentRows();
+  const fileRows=rows.filter(r=>r.kind==="file");
+  $("selAll").hidden=fileRows.length===0;
+  const cbAll=$("cbAll");
+  cbAll.style.visibility=fileRows.length?"visible":"hidden";
+  cbAll.checked=fileRows.length>0&&fileRows.every(r=>sel.has(r.rec.id));
+  cbAll.indeterminate=!cbAll.checked&&fileRows.some(r=>sel.has(r.rec.id));
+
+  // selection bar
+  const n=sel.size;
+  $("actionbar").hidden=n===0;
+  $("crow").hidden=n>0;
+  if(n){
+    const bytes=idx.files.filter(f=>sel.has(f.id)).reduce((a,f)=>a+f.size,0);
+    $("selCnt").textContent=`${n} selected · ${fmt(bytes)}`;
   }
+
+  $("lhead").hidden=ui.mode!=="list"||rows.length===0;
+  $("vList").classList.toggle("on",ui.mode==="list");
+  $("vGrid").classList.toggle("on",ui.mode==="grid");
+
+  const host=$("listHost");
+  if(!rows.length){
+    host.innerHTML=`<div class="empty">${plainIco(query?"file":"folder","")}
+      <p class="t">${query?"No files match your search":navView==="mine"&&cwd==="/"?"Your vault is empty":"Nothing here"}</p>
+      <p>${query?"Try a different name.":"Drop files anywhere on this page to upload."}</p></div>`;
+    return;
+  }
+
+  host.innerHTML = ui.mode==="list"
+    ? `<div class="rows">${rows.map(rowHtml).join("")}</div>`
+    : `<div class="grid">${rows.map(cardHtml).join("")}</div>`;
+  wireRows(host,rows);
 }
 
-/* ============================== selection ============================== */
-function selBar() {
-  const n = sel.size;
-  $("selbar").hidden = n === 0;
-  $("selCnt").textContent = `${n} selected · ${fmt(idx.files.filter(f => sel.has(f.id)).reduce((a, f) => a + f.size, 0))}`;
+function rowHtml(r){
+  if(r.kind==="folder"){
+    const inside=subtreeFiles(r.path);
+    return `<div class="row" data-folder="${esc(r.path)}">
+      <span></span>
+      <div class="nm">${ico("folder")}<span>${esc(r.path.split("/").pop())}</span></div>
+      <div class="cell mod">${inside.length} item${inside.length===1?"":"s"}</div>
+      <div class="cell r">${fmt(inside.reduce((a,f)=>a+f.size,0))}</div>
+      <div class="rowacts"><button class="iconbtn" data-act="delfolder" aria-label="Delete folder">${plainIco("trash","")}</button></div>
+    </div>`;
+  }
+  const f=r.rec,k=kindOf(f),on=sel.has(f.id);
+  const lead=f.thumb?`<img class="thumb" src="data:image/jpeg;base64,${esc(f.thumb)}" alt="">`:ico(k);
+  return `<div class="row${on?" on":""}" data-id="${esc(f.id)}">
+    <input class="cb" type="checkbox" ${on?"checked":""} aria-label="Select ${esc(f.name)}">
+    <div class="nm" data-open="1">${lead}<span>${esc(f.name)}</span></div>
+    <div class="cell mod">${when(f.createdAt)}</div>
+    <div class="cell r">${fmt(f.size)}</div>
+    <div class="rowacts">
+      ${CAN_PREVIEW[k]?`<button class="iconbtn" data-act="view" aria-label="Preview">${plainIco("eye","")}</button>`:""}
+      <button class="iconbtn" data-act="get" aria-label="Download">${plainIco("dl","")}</button>
+      <button class="iconbtn" data-act="del" aria-label="Delete">${plainIco("trash","")}</button>
+    </div>
+  </div>`;
 }
-$("selAllBtn").onclick = () => { visibleFiles().forEach(f => sel.add(f.id)); render(); };
-$("selNoneBtn").onclick = () => { sel.clear(); render(); };
-$("dlSelBtn").onclick = () => {
-  const recs = idx.files.filter(f => sel.has(f.id));
-  if (!recs.length) return;
-  recs.forEach(queueDownload);
-  toast(`Queued ${recs.length} download${recs.length === 1 ? "" : "s"}. They save one after another.`);
-  sel.clear(); render();
+function cardHtml(r){
+  if(r.kind==="folder"){
+    const inside=subtreeFiles(r.path);
+    return `<div class="card" data-folder="${esc(r.path)}">
+      <div class="top"><span class="cb" style="width:17px"></span>${ico("folder","ico")}<span class="t">${esc(r.path.split("/").pop())}</span></div>
+      <div class="prev">${plainIco("folder","big")}</div>
+      <div class="meta">${inside.length} item${inside.length===1?"":"s"} · ${fmt(inside.reduce((a,f)=>a+f.size,0))}</div>
+    </div>`;
+  }
+  const f=r.rec,k=kindOf(f),on=sel.has(f.id);
+  const body=f.thumb
+    ? `<img src="data:image/jpeg;base64,${esc(f.thumb)}" alt="">${k==="video"?`<span class="play">${plainIco("play","")}</span>`:""}`
+    : plainIco(k,"big");
+  return `<div class="card${on?" on":""}" data-id="${esc(f.id)}">
+    <div class="top">
+      <input class="cb" type="checkbox" ${on?"checked":""} aria-label="Select ${esc(f.name)}">
+      ${ico(k,"ico")}<span class="t" data-open="1">${esc(f.name)}</span>
+    </div>
+    <div class="prev" data-open="1">${body}</div>
+    <div class="meta">${fmt(f.size)} · ${when(f.createdAt)}</div>
+  </div>`;
+}
+function wireRows(host,rows){
+  const byId=new Map(rows.filter(r=>r.kind==="file").map(r=>[r.rec.id,r]));
+  host.querySelectorAll("[data-folder]").forEach(el=>{
+    const p=el.dataset.folder;
+    el.querySelectorAll('[data-act="delfolder"]').forEach(b=>b.onclick=(e)=>{e.stopPropagation();deleteFolder(p)});
+    el.addEventListener("click",e=>{ if(e.target.closest("[data-act]"))return; cwd=p;sel.clear();render(); });
+  });
+  host.querySelectorAll("[data-id]").forEach(el=>{
+    const r=byId.get(el.dataset.id);if(!r)return;
+    const cb=el.querySelector(".cb");
+    if(cb)cb.onclick=(e)=>{e.stopPropagation();toggleSel(r.rec.id,cb.checked)};
+    el.querySelectorAll("[data-open]").forEach(o=>o.onclick=(e)=>{e.stopPropagation();openRow(r)});
+    el.querySelectorAll("[data-act]").forEach(b=>b.onclick=async(e)=>{
+      e.stopPropagation();
+      const a=b.dataset.act;
+      if(a==="view")openPreview(r.rec);
+      if(a==="get")queueDownload(r.rec);
+      if(a==="del"){ if(confirm(`Delete "${r.rec.name}"?`))await deleteRecords([r.rec]); }
+    });
+    el.addEventListener("click",e=>{
+      if(e.target.closest("[data-act]")||e.target.closest("[data-open]")||e.target.classList.contains("cb"))return;
+      const only=!(sel.size===1&&sel.has(r.rec.id));
+      sel.clear(); if(only)sel.add(r.rec.id);
+      render();
+    });
+  });
+}
+
+/* ================================ chrome ============================== */
+function selectAllHere(){currentRows().filter(r=>r.kind==="file").forEach(r=>sel.add(r.rec.id));render()}
+$("selAll").onclick=selectAllHere;
+$("cbAll").onclick=(e)=>{
+  e.stopPropagation();
+  if($("cbAll").checked)selectAllHere(); else {sel.clear();render()}
 };
-$("delSelBtn").onclick = async () => {
-  const recs = idx.files.filter(f => sel.has(f.id));
-  if (!recs.length) return;
-  if (!confirm(`Delete ${recs.length} file${recs.length === 1 ? "" : "s"} from Saved Messages?`)) return;
+const TEXTY=["text","password","search","email","url","tel","number"];
+function isTyping(t){
+  if(!t)return false;
+  if(t.isContentEditable||t.tagName==="TEXTAREA")return true;
+  return t.tagName==="INPUT"&&TEXTY.includes((t.type||"text").toLowerCase());
+}
+document.addEventListener("keydown",e=>{
+  if(!$("pv").hidden||$("scrVault").hidden)return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="a"&&!isTyping(e.target)){
+    e.preventDefault();selectAllHere();
+  }
+});
+$("selNone").onclick=()=>{sel.clear();render()};
+$("dlSel").onclick=()=>{
+  const recs=idx.files.filter(f=>sel.has(f.id));if(!recs.length)return;
+  recs.forEach(queueDownload);sel.clear();render();
+};
+$("delSel").onclick=async()=>{
+  const recs=idx.files.filter(f=>sel.has(f.id));if(!recs.length)return;
+  if(!confirm(`Delete ${recs.length} item${recs.length===1?"":"s"}?`))return;
   await deleteRecords(recs);
 };
+["navMine","navAll","navRecent"].forEach(id=>$(id).onclick=()=>{
+  navView=$(id).dataset.view;query="";$("search").value="";$("clearSearch").hidden=true;
+  if(navView==="mine")cwd="/";
+  sel.clear();$("side").classList.remove("open");render();
+});
+$("vList").onclick=()=>{ui.mode="list";lsSet(UI_LS,ui);render()};
+$("vGrid").onclick=()=>{ui.mode="grid";lsSet(UI_LS,ui);render()};
+$("sort").onchange=()=>{ui.sort=$("sort").value;lsSet(UI_LS,ui);render()};
+$("search").addEventListener("input",()=>{
+  query=$("search").value.trim();$("clearSearch").hidden=!query;sel.clear();render();
+});
+$("clearSearch").onclick=()=>{$("search").value="";query="";$("clearSearch").hidden=true;render()};
+$("hambBtn").onclick=()=>$("side").classList.toggle("open");
 
-/* =============================== render ================================ */
-function visibleFiles() {
-  const q = $("search").value.trim().toLowerCase();
-  let list = q ? idx.files.filter(f => f.name.toLowerCase().includes(q)) : filesIn(cwd);
-  return list.slice().sort((a, b) => b.createdAt - a.createdAt);
-}
-function render() {
-  const [n, u] = splitSize(totalBytes());
-  $("uNum").textContent = n; $("uUnit").textContent = u;
-  $("uCount").textContent = `${idx.files.length} file${idx.files.length === 1 ? "" : "s"}`;
-
-  const parts = cwd === "/" ? [] : cwd.split("/").filter(Boolean);
-  let acc = "";
-  const crumbs = [`<button data-p="/">Saved Messages</button>`];
-  parts.forEach((seg, i) => {
-    acc += "/" + seg;
-    crumbs.push(`<span class="sep">/</span>`);
-    crumbs.push(i === parts.length - 1 ? `<span class="here">${esc(seg)}</span>` : `<button data-p="${esc(acc)}">${esc(seg)}</button>`);
+let menuEl=null;
+function closeMenu(){if(menuEl){menuEl.remove();menuEl=null}}
+$("newBtn").onclick=(e)=>{
+  if(menuEl){closeMenu();return}
+  e.stopPropagation();
+  const b=e.currentTarget.getBoundingClientRect();
+  menuEl=document.createElement("div");
+  menuEl.style.cssText=`position:fixed;left:${b.left}px;top:${b.bottom+6}px;z-index:60;background:var(--surface);
+    border:1px solid var(--line-soft);border-radius:8px;box-shadow:var(--sh-2);padding:6px;min-width:200px`;
+  menuEl.innerHTML=[["up","File upload","upload"],["newfolder","New folder","folder"]].map(([i,t,a])=>
+    `<button data-a="${a}" style="display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;
+      padding:10px 12px;border-radius:6px;font-size:14px;text-align:left">${plainIco(i,"")}${t}</button>`).join("");
+  menuEl.querySelectorAll("button").forEach(x=>{
+    x.onmouseenter=()=>x.style.background="var(--hover)";
+    x.onmouseleave=()=>x.style.background="none";
+    x.onclick=()=>{const a=x.dataset.a;closeMenu();a==="upload"?$("fileInput").click():createFolder()};
   });
-  $("crumbs").innerHTML = crumbs.join("");
-  $("crumbs").querySelectorAll("button").forEach(b => b.onclick = () => { cwd = b.dataset.p; sel.clear(); $("search").value = ""; render(); });
-
-  const q = $("search").value.trim();
-  const folders = q ? [] : childFolders(cwd);
-  const files = visibleFiles();
-  const list = $("list");
-  $("selAllBtn").hidden = files.length === 0;
-
-  if (!folders.length && !files.length) {
-    list.innerHTML = `<div class="empty">${q ? `Nothing matches “${esc(q)}”.`
-      : cwd === "/" ? "Nothing here yet. Drop a file above and it goes straight into your Saved Messages."
-      : "This folder is empty."}</div>`;
-    selBar(); paintIdx(); return;
-  }
-
-  const folderRows = folders.map(p => {
-    const inside = subtreeFiles(p);
-    const label = p.split("/").pop();
-    return `<div class="frow folder" data-folder="${esc(p)}">
-      <span></span>
-      <div class="ft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
-      <div class="fmeta">
-        <div class="fname link">${esc(label)}</div>
-        <div class="fsub">${inside.length} file${inside.length === 1 ? "" : "s"}<span class="dot">·</span>${fmt(inside.reduce((a, f) => a + f.size, 0))}</div>
-      </div>
-      <div class="facts"><button class="btn sm danger" data-act="delfolder">Delete</button></div>
-    </div>`;
-  }).join("");
-
-  const fileRows = files.map(f => `
-    <div class="frow${sel.has(f.id) ? " sel" : ""}" data-id="${esc(f.id)}">
-      <input class="cbx" type="checkbox" ${sel.has(f.id) ? "checked" : ""} aria-label="Select ${esc(f.name)}">
-      <div class="ft">${esc(extOf(f.name))}</div>
-      <div class="fmeta">
-        <div class="fname" title="${esc(f.name)}">${esc(f.name)}</div>
-        <div class="fsub">${fmt(f.size)}<span class="dot">·</span>${when(f.createdAt)}${q && f.path !== "/" ? `<span class="dot">·</span>${esc(f.path)}` : ""}${f.remoteId ? "" : `<span class="dot">·</span><span class="bad">no reference</span>`}</div>
-      </div>
-      <div class="facts">
-        <button class="btn sm quiet" data-act="get">Download</button>
-        <button class="btn sm danger" data-act="del">Delete</button>
-      </div>
-    </div>`).join("");
-
-  list.innerHTML = folderRows + fileRows;
-
-  list.querySelectorAll("[data-folder] .fname").forEach(el => el.onclick = () => {
-    cwd = el.closest("[data-folder]").dataset.folder; sel.clear(); render();
-  });
-  list.querySelectorAll('[data-folder] [data-act="delfolder"]').forEach(b => b.onclick = () => deleteFolder(b.closest("[data-folder]").dataset.folder));
-  list.querySelectorAll(".cbx").forEach(cb => cb.onchange = () => {
-    const id = cb.closest(".frow").dataset.id;
-    cb.checked ? sel.add(id) : sel.delete(id);
-    cb.closest(".frow").classList.toggle("sel", cb.checked);
-    selBar();
-  });
-  list.querySelectorAll('[data-id] [data-act]').forEach(b => b.onclick = async () => {
-    const id = b.closest(".frow").dataset.id;
-    const rec = idx.files.find(f => f.id === id);
-    if (!rec) return;
-    if (b.dataset.act === "get") queueDownload(rec);
-    if (b.dataset.act === "del") { if (confirm(`Delete "${rec.name}" from Saved Messages?`)) await deleteRecords([rec]); }
-  });
-
-  selBar(); paintIdx();
-}
-$("search").addEventListener("input", render);
-
-/* ============================= file picking ============================ */
-$("pickBtn").onclick = () => $("fileInput").click();
-$("fileInput").onchange = (e) => {
-  const files = [...e.target.files]; e.target.value = "";
-  files.forEach(f => f.size === 0 ? toast(`"${f.name}" is empty, so there was nothing to send.`) : queueUpload(f, cwd));
+  document.body.appendChild(menuEl);
 };
-const drop = $("drop");
-["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("hot"); }));
-["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("hot"); }));
-drop.addEventListener("drop", e => {
-  [...(e.dataTransfer ? e.dataTransfer.files : [])].forEach(f => f.size === 0 ? null : queueUpload(f, cwd));
-});
-["dragover","drop"].forEach(ev => window.addEventListener(ev, e => {
-  if (e.target.closest && e.target.closest("#drop")) return;
-  e.preventDefault();
-}));
-window.addEventListener("beforeunload", (e) => {
-  if (queue.length || running || idxDirty) { e.preventDefault(); e.returnValue = ""; }
-});
+document.addEventListener("click",()=>closeMenu());
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
 
-/* ============================ service worker =========================== */
-if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
-}
+/* ============================= file input ============================= */
+$("fileInput").onchange=(e)=>{
+  const files=[...e.target.files];e.target.value="";
+  const dest=navView==="mine"?cwd:"/";
+  files.forEach(f=>f.size===0?toast(`"${f.name}" is empty.`):queueUpload(f,dest));
+};
+let dragDepth=0;
+window.addEventListener("dragenter",e=>{e.preventDefault();dragDepth++});
+window.addEventListener("dragover",e=>e.preventDefault());
+window.addEventListener("dragleave",()=>{dragDepth=Math.max(0,dragDepth-1)});
+window.addEventListener("drop",e=>{
+  e.preventDefault();dragDepth=0;
+  if($("scrVault").hidden)return;
+  const dest=navView==="mine"?cwd:"/";
+  [...(e.dataTransfer?e.dataTransfer.files:[])].forEach(f=>{if(f.size)queueUpload(f,dest)});
+});
+window.addEventListener("beforeunload",e=>{if(queue.length||running||idxDirty){e.preventDefault();e.returnValue=""}});
 
-/* ================================ start ================================ */
-if (keys) { $("apiId").value = keys.apiId || ""; $("apiHash").value = keys.apiHash || ""; }
+if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"))
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+
+/* =============================== start ================================ */
+$("sort").value=ui.sort;
+if(keys){$("apiId").value=keys.apiId||"";$("apiHash").value=keys.apiHash||""}
 boot();
 
-/* Testing seam for the project's automated checks. */
-window.__vault = {
-  state: () => ({ idx, cwd, sel: [...sel], authState, savedChatId, idxMessageId, queued: queue.length, running }),
-  setCwd(p) { cwd = p; sel.clear(); render(); },
-  upload: queueUpload, download: queueDownload,
-  saveIndex, loadIndex, render,
-  drain: async () => { for (let i = 0; i < 600 && (queue.length || running); i++) await sleep(50); }
+window.__vault={
+  state:()=>({idx,cwd,navView,query,mode:ui.mode,sort:ui.sort,sel:[...sel],authState,savedChatId,idxMessageId,queued:queue.length,running,
+    pv:{open:!$("pv").hidden,name:$("pvName").textContent,count:pvList.length,i:pvIdx}}),
+  setCwd(p){cwd=p;navView="mine";sel.clear();render()},
+  upload:queueUpload,download:queueDownload,openPreview,closePreview,pvStep,
+  saveIndex,loadIndex,render,createFolder,
+  setBigPreview(n){BIG_PREVIEW=n},
+  drain:async()=>{for(let i=0;i<900&&(queue.length||running);i++)await sleep(50)}
 };
 })();
 
