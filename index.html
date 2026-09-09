@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vault</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vault">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#EDF1F5">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D131A">
+<meta name="referrer" content="no-referrer">
+<style>
+:root{
+  --paper:#EDF1F5; --card:#FFFFFF; --sunk:#E3EAF1;
+  --ink:#111A24; --ink-2:#33465A; --muted:#5F7186;
+  --line:#D2DDE7; --line-soft:#E4EBF2;
+  --accent:#1A87BE; --accent-ink:#0F5F87; --accent-soft:#DEEDF6;
+  --warn:#8A560F; --warn-soft:#F6EBD9; --warn-line:#E8D3AE;
+  --ok:#1F7A57; --ok-soft:#DDEFE7;
+  --danger:#9C2D26; --danger-soft:#F7E3E1;
+  --on-accent:#FFFFFF;
+  --shadow:0 1px 2px rgba(17,26,36,.06), 0 10px 26px -18px rgba(17,26,36,.30);
+  --radius:9px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D131A; --card:#151F29; --sunk:#101922;
+    --ink:#E7EEF5; --ink-2:#BCCBD9; --muted:#8A9BAB;
+    --line:#25333F; --line-soft:#1C2831;
+    --accent:#4FB4E4; --accent-ink:#93D3F1; --accent-soft:#122B39;
+    --warn:#DEA85C; --warn-soft:#2A2214; --warn-line:#453718;
+    --ok:#5EC59A; --ok-soft:#112A20;
+    --danger:#E9928A; --danger-soft:#331A17;
+    --on-accent:#08131A;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -20px rgba(0,0,0,.85);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D131A; --card:#151F29; --sunk:#101922;
+  --ink:#E7EEF5; --ink-2:#BCCBD9; --muted:#8A9BAB;
+  --line:#25333F; --line-soft:#1C2831;
+  --accent:#4FB4E4; --accent-ink:#93D3F1; --accent-soft:#122B39;
+  --warn:#DEA85C; --warn-soft:#2A2214; --warn-line:#453718;
+  --ok:#5EC59A; --ok-soft:#112A20;
+  --danger:#E9928A; --danger-soft:#331A17;
+  --on-accent:#08131A;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -20px rgba(0,0,0,.85);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font:15.5px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{margin:0;letter-spacing:-.018em;line-height:1.2}
+p{margin:0}
+button{font:inherit;cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ---------- shell ---------- */
+.top{
+  position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--line);
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+}
+.top-in{max-width:940px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand img{width:26px;height:26px;border-radius:6px;display:block}
+.brand b{font-size:16.5px;font-weight:650;letter-spacing:-.02em}
+.chip{
+  font-size:12px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap;
+  background:var(--accent-soft);color:var(--accent-ink);border:1px solid transparent
+}
+.chip.off{background:var(--sunk);color:var(--muted)}
+.spacer{flex:1}
+.gbtn{
+  background:transparent;border:1px solid var(--line);color:var(--ink-2);
+  padding:6px 11px;border-radius:7px;font-size:13.5px;font-weight:550
+}
+.gbtn:hover{background:var(--sunk);color:var(--ink)}
+main{max-width:940px;margin:0 auto;padding:22px 16px 64px;display:flex;flex-direction:column;gap:20px}
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-h{padding:16px 18px;border-bottom:1px solid var(--line-soft);display:flex;gap:12px;align-items:flex-start}
+.card-b{padding:18px}
+.step-n{
+  flex:0 0 auto;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;
+  font-size:12.5px;font-weight:700;background:var(--accent-soft);color:var(--accent-ink)
+}
+.step-n.done{background:var(--ok-soft);color:var(--ok)}
+.card-h h2{font-size:17px;font-weight:620}
+.card-h .sub{margin-top:3px;font-size:14px;color:var(--muted);max-width:64ch}
+
+label.fl{display:block;font-size:12px;font-weight:650;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+input[type=text],input[type=password],textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:7px;
+  background:var(--paper);color:var(--ink);font:inherit
+}
+input.mono,textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px}
+textarea{resize:vertical;min-height:66px}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.tight{gap:8px}
+.grow{flex:1;min-width:200px}
+.btn{
+  background:var(--accent);color:var(--on-accent);border:0;padding:10px 16px;border-radius:7px;font-weight:600;font-size:14.5px
+}
+.btn:hover{filter:brightness(1.07)}
+.btn:disabled,.gbtn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent;color:var(--accent-ink);border:1px solid var(--accent)}
+.btn.quiet{background:var(--sunk);color:var(--ink-2);border:1px solid var(--line)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:6px}
+.btn.danger{background:transparent;color:var(--danger);border:1px solid var(--danger)}
+.hint{font-size:13.5px;color:var(--muted);margin-top:9px}
+.hint code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--sunk);padding:1px 5px;border-radius:4px;border:1px solid var(--line-soft)}
+
+.note{
+  display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:start;
+  padding:12px 14px;border-radius:7px;font-size:14px;line-height:1.5
+}
+.note b{font-weight:650}
+.note.warn{background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn-line)}
+.note.info{background:var(--accent-soft);color:var(--accent-ink)}
+.note .ic{font-size:15px;line-height:1.35}
+.msg{font-size:14px;margin-top:10px;padding:9px 12px;border-radius:6px;display:none}
+.msg.show{display:block}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.bad{background:var(--danger-soft);color:var(--danger)}
+
+/* ---------- channel picker ---------- */
+.pick{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.pick button{
+  text-align:left;background:var(--sunk);border:1px solid var(--line);border-radius:7px;padding:11px 13px;
+  color:var(--ink);display:flex;justify-content:space-between;gap:12px;align-items:center
+}
+.pick button:hover{border-color:var(--accent)}
+.pick .nm{font-weight:600}
+.pick .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--muted)}
+
+/* ---------- dropzone ---------- */
+.drop{
+  border:1.5px dashed var(--line);border-radius:var(--radius);background:var(--card);
+  padding:30px 20px;text-align:center;transition:border-color .12s,background .12s
+}
+.drop.hot{border-color:var(--accent);background:var(--accent-soft)}
+.drop h2{font-size:18px;font-weight:620}
+.drop p{margin-top:6px;color:var(--muted);font-size:14px}
+.drop .row{justify-content:center;margin-top:16px}
+
+/* ---------- transfers ---------- */
+.xfer{display:flex;flex-direction:column}
+.xrow{padding:13px 18px;border-bottom:1px solid var(--line-soft);display:flex;flex-direction:column;gap:8px}
+.xrow:last-child{border-bottom:0}
+.xtop{display:flex;gap:12px;align-items:baseline}
+.xname{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.xstat{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{height:5px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .18s ease-out;border-radius:99px}
+.xrow.err .bar i{background:var(--danger)}
+.xerr{font-size:13px;color:var(--danger)}
+
+/* ---------- file list ---------- */
+.list{display:flex;flex-direction:column}
+.frow{
+  display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:13px;align-items:center;
+  padding:12px 18px;border-bottom:1px solid var(--line-soft)
+}
+.frow:last-child{border-bottom:0}
+.ft{
+  width:34px;height:34px;border-radius:7px;display:grid;place-items:center;
+  background:var(--sunk);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.02em;
+  border:1px solid var(--line-soft);text-transform:uppercase;overflow:hidden
+}
+.fmeta{min-width:0}
+.fname{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fsub{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.fsub .dot{opacity:.5;margin:0 5px}
+.fsub .bad{color:var(--danger)}
+.facts{display:flex;gap:7px}
+.empty{padding:34px 18px;text-align:center;color:var(--muted);font-size:14.5px}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line-soft);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.stat{background:var(--card);padding:14px 16px}
+.stat .k{font-size:11px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-size:21px;font-weight:650;margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .v small{font-size:13px;font-weight:550;color:var(--muted);letter-spacing:0}
+
+details.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+details.panel > summary{
+  padding:14px 18px;cursor:pointer;font-weight:620;font-size:15px;display:flex;align-items:center;gap:9px;list-style:none
+}
+details.panel > summary::-webkit-details-marker{display:none}
+details.panel > summary::before{content:"›";color:var(--muted);font-size:19px;line-height:1;transition:transform .15s}
+details.panel[open] > summary::before{transform:rotate(90deg)}
+details.panel > summary:hover{background:var(--sunk)}
+.panel-b{padding:4px 18px 18px;display:flex;flex-direction:column;gap:18px;border-top:1px solid var(--line-soft)}
+.sect h3{font-size:14px;font-weight:650;margin-bottom:4px}
+.sect p.d{font-size:13.5px;color:var(--muted);margin-bottom:10px;max-width:66ch}
+.limits{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.limits span b{color:var(--ink-2);font-weight:600}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);
+  background:var(--ink);color:var(--paper);padding:11px 16px;border-radius:8px;font-size:14px;
+  max-width:min(560px,calc(100vw - 32px));box-shadow:0 8px 30px rgba(0,0,0,.3);z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .18s,transform .18s
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:560px){
+  .frow{grid-template-columns:30px minmax(0,1fr);gap:11px;padding:12px 14px}
+  .facts{grid-column:1/-1;justify-content:flex-start}
+  .ft{width:30px;height:30px}
+  .card-b,.card-h{padding-left:14px;padding-right:14px}
+  .xrow{padding-left:14px;padding-right:14px}
+  main{padding:16px 12px 56px}
+}
+/* ================= additions for the TDLib build ================= */
+.top-in{flex-wrap:wrap;row-gap:8px}
+.usage{display:flex;align-items:baseline;gap:7px;margin-left:auto}
+.usage .n{font-size:19px;font-weight:680;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.usage .u{font-size:12px;font-weight:600;color:var(--muted)}
+.usage .c{font-size:12px;color:var(--muted);border-left:1px solid var(--line);padding-left:9px;margin-left:2px}
+
+/* breadcrumb + toolbar */
+.toolbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 16px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow)
+}
+.crumbs{display:flex;align-items:center;gap:3px;flex-wrap:wrap;min-width:0;font-size:14px}
+.crumbs button{
+  background:transparent;border:0;color:var(--accent-ink);padding:3px 6px;border-radius:5px;
+  font:inherit;font-weight:600
+}
+.crumbs button:hover{background:var(--accent-soft)}
+.crumbs .sep{color:var(--muted);opacity:.6}
+.crumbs .here{font-weight:650;padding:3px 6px;color:var(--ink)}
+
+.selbar{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 16px;
+  background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius)
+}
+.selbar .cnt{font-size:14px;font-weight:650;color:var(--accent-ink);margin-right:2px}
+.selbar .spacer{flex:1}
+
+/* rows */
+.frow{grid-template-columns:22px 34px minmax(0,1fr) auto}
+.frow.sel{background:var(--accent-soft)}
+.frow.folder .ft{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+.cbx{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;margin:0}
+.fname.link{cursor:pointer}
+.fname.link:hover{color:var(--accent-ink);text-decoration:underline}
+.ft svg{width:19px;height:19px;display:block}
+
+/* transfer queue */
+.qhead{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line-soft)}
+.qhead h2{font-size:16px;font-weight:640;flex:1}
+.qsum{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.xrow .dir{
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;background:var(--sunk);color:var(--muted);border:1px solid var(--line-soft)
+}
+.xrow.up .dir{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+.xrow.dn .dir{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.xrow.wait{opacity:.62}
+
+/* login */
+.authwrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.codebox{letter-spacing:.34em;font-size:22px;text-align:center;font-weight:600;padding:13px}
+.tiny{font-size:12.5px;color:var(--muted);margin-top:8px}
+.tiny a{color:var(--accent-ink)}
+.dim{opacity:.55;pointer-events:none}
+.spin{
+  width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);
+  border-radius:50%;display:inline-block;vertical-align:-3px;animation:sp .7s linear infinite
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+.boot{display:flex;align-items:center;gap:11px;justify-content:center;padding:44px 18px;color:var(--muted);font-size:14.5px}
+@media (max-width:560px){
+  .frow{grid-template-columns:22px 30px minmax(0,1fr)}
+  .usage{margin-left:0;width:100%;border-top:1px solid var(--line-soft);padding-top:8px}
+}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <span class="brand"><img src="icon.svg" alt=""><b>Vault</b></span>
+    <span class="chip off" id="meChip">signed out</span>
+    <span class="usage" id="usage" hidden>
+      <span class="n" id="uNum">0</span><span class="u" id="uUnit">B</span>
+      <span class="c" id="uCount">0 files</span>
+    </span>
+    <button class="gbtn" id="logoutBtn" hidden>Log out</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== booting ===================== -->
+  <section id="booting">
+    <div class="boot"><span class="spin"></span><span id="bootMsg">Starting TDLib…</span></div>
+  </section>
+
+  <!-- ===================== step 1: API credentials ===================== -->
+  <section id="scrKeys" hidden>
+    <div class="authwrap">
+      <div class="note warn">
+        <span class="ic">⚠</span>
+        <span><b>This signs you in to your whole Telegram account.</b> Not a bot, not one channel — everything. Only ever enter a login code on a page whose address you recognise, and consider using a spare Telegram account for this.</span>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <span class="step-n" id="k1">1</span>
+          <div>
+            <h2>Your Telegram API keys</h2>
+            <p class="sub">Sign in at <b>my.telegram.org</b> → API development tools → create an app. You get an <b>api_id</b> and an <b>api_hash</b>. They're yours — don't reuse anyone else's.</p>
+          </div>
+        </div>
+        <div class="card-b">
+          <label class="fl" for="apiId">api_id</label>
+          <input class="mono" type="text" id="apiId" placeholder="1234567" inputmode="numeric" autocomplete="off" spellcheck="false">
+          <div style="height:12px"></div>
+          <label class="fl" for="apiHash">api_hash</label>
+          <input class="mono" type="text" id="apiHash" placeholder="0123456789abcdef0123456789abcdef" autocomplete="off" spellcheck="false">
+          <div class="row" style="margin-top:14px">
+            <button class="btn" id="keysBtn">Save &amp; continue</button>
+          </div>
+          <p class="tiny">Saved in this browser only, and reused automatically next time. <a href="https://my.telegram.org/apps" target="_blank" rel="noreferrer noopener">Open my.telegram.org →</a></p>
+          <div class="msg" id="mKeys"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== step 2: phone ===================== -->
+  <section id="scrPhone" hidden>
+    <div class="authwrap">
+      <div class="card">
+        <div class="card-h">
+          <span class="step-n">2</span>
+          <div>
+            <h2>Sign in with your phone number</h2>
+            <p class="sub">Telegram sends a code to your existing Telegram app — not by SMS, usually.</p>
+          </div>
+        </div>
+        <div class="card-b">
+          <label class="fl" for="phone">Phone number, with country code</label>
+          <input class="mono" type="text" id="phone" placeholder="+919876543210" inputmode="tel" autocomplete="tel">
+          <div class="row" style="margin-top:14px">
+            <button class="btn" id="phoneBtn">Send code</button>
+            <button class="btn quiet sm" id="editKeysBtn">Change API keys</button>
+          </div>
+          <p class="tiny">Your number is used for this sign-in and is never stored by the app.</p>
+          <div class="msg" id="mPhone"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== step 3: code ===================== -->
+  <section id="scrCode" hidden>
+    <div class="authwrap">
+      <div class="card">
+        <div class="card-h">
+          <span class="step-n">3</span>
+          <div><h2>Enter the code</h2><p class="sub" id="codeHint">Check your other Telegram app for a login code.</p></div>
+        </div>
+        <div class="card-b">
+          <input class="mono codebox" type="text" id="code" placeholder="00000" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+          <div class="row" style="margin-top:14px">
+            <button class="btn" id="codeBtn">Sign in</button>
+            <button class="btn quiet sm" id="backPhoneBtn">Use a different number</button>
+          </div>
+          <div class="msg" id="mCode"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== step 4: 2FA ===================== -->
+  <section id="scrPass" hidden>
+    <div class="authwrap">
+      <div class="card">
+        <div class="card-h">
+          <span class="step-n">4</span>
+          <div><h2>Two-step verification</h2><p class="sub" id="passHint">This account has a password set.</p></div>
+        </div>
+        <div class="card-b">
+          <input type="password" id="pass" placeholder="Your Telegram password" autocomplete="current-password">
+          <div class="row" style="margin-top:14px"><button class="btn" id="passBtn">Unlock</button></div>
+          <div class="msg" id="mPass"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== the vault ===================== -->
+  <section id="scrVault" hidden style="display:flex;flex-direction:column;gap:16px">
+
+    <div class="drop" id="drop">
+      <h2>Drop files here</h2>
+      <p>Straight into your Saved Messages, up to 2&nbsp;GB per file — 4&nbsp;GB with Premium. No splitting.</p>
+      <div class="row">
+        <button class="btn" id="pickBtn">Choose files</button>
+        <button class="btn quiet" id="newFolderBtn">New folder</button>
+        <input type="file" id="fileInput" multiple hidden>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="crumbs" id="crumbs"></div>
+      <span class="spacer" style="flex:1"></span>
+      <button class="btn sm quiet" id="selAllBtn" hidden>Select all</button>
+      <input class="mono" type="text" id="search" placeholder="Filter…" style="max-width:180px" autocomplete="off">
+    </div>
+
+    <div class="selbar" id="selbar" hidden>
+      <span class="cnt" id="selCnt">0 selected</span>
+      <button class="btn sm ghost" id="dlSelBtn">Download</button>
+      <button class="btn sm danger" id="delSelBtn">Delete</button>
+      <span class="spacer"></span>
+      <button class="btn sm quiet" id="selNoneBtn">Deselect all</button>
+    </div>
+
+    <div class="card" id="qCard" hidden>
+      <div class="qhead">
+        <h2>Transfers</h2>
+        <span class="qsum" id="qSum"></span>
+        <button class="gbtn" id="qClearBtn">Clear finished</button>
+      </div>
+      <div class="xfer" id="xfer"></div>
+    </div>
+
+    <div class="card">
+      <div class="list" id="list"></div>
+    </div>
+
+    <details class="panel">
+      <summary>How this vault stores things</summary>
+      <div class="panel-b">
+        <div class="note info">
+          <span class="ic">ℹ</span>
+          <span>Your files are messages in your own <b>Saved Messages</b>. The index — names, folders, sizes and file references — is a <b>pinned <span class="mono">vault-index.json</span></b> in there too, so any device you sign in on rebuilds this view by itself.</span>
+        </div>
+        <div class="sect">
+          <h3>Index</h3>
+          <p class="d" id="idxLine">—</p>
+          <div class="row">
+            <button class="btn sm quiet" id="saveIdxBtn">Save index now</button>
+            <button class="btn sm quiet" id="reloadIdxBtn">Reload from Telegram</button>
+            <button class="btn sm quiet" id="exportIdxBtn">Download a copy</button>
+          </div>
+          <div class="msg" id="mIdx"></div>
+        </div>
+        <div class="sect">
+          <h3>This device</h3>
+          <p class="d" id="devLine">—</p>
+          <div class="row">
+            <button class="btn sm danger" id="wipeBtn">Log out &amp; wipe this device</button>
+          </div>
+          <p class="hint">Ends the Telegram session for this browser and clears the local TDLib database. Nothing in Saved Messages is touched.</p>
+        </div>
+      </div>
+    </details>
+  </section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="tdweb.js"></script>
+<script>
+(() => {
+"use strict";
+/* ==========================================================================
+   Telegram Vault (TDLib build)
+
+   Storage is your own Saved Messages, reached over MTProto through TDLib
+   compiled to WebAssembly (tdweb 1.8.40, vendored beside this file).
+
+   Why this shape:
+   - tdweb.js is a UMD bundle exposing window.tdweb, and its webpack
+     publicPath is "", so tdweb.js, both .worker.js files and the .wasm MUST
+     sit in the same directory as index.html. Do not move them.
+   - Files go up as inputFileBlob, a tdweb extension that hands a browser
+     File straight to TDLib. 2 GB per file, 4 GB with Premium. No chunking.
+   - The index is a pinned vault-index.json in Saved Messages, so any device
+     you sign in on rebuilds this view on its own.
+   ========================================================================== */
+
+const KEYS_LS = "vault.keys.v1";
+const IDX_LS  = "vault.idxcache.v1";
+const IDX_NAME = "vault-index.json";
+const READ_PART = 32 * 1024 * 1024;
+
+const $ = (id) => document.getElementById(id);
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (_) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} };
+
+function fmt(b) {
+  if (b == null || isNaN(b)) return "—";
+  if (b < 1024) return b + " B";
+  const u = ["KB","MB","GB","TB"]; let i = -1, n = b;
+  do { n /= 1024; i++; } while (n >= 1024 && i < u.length - 1);
+  return (n < 10 ? n.toFixed(1) : Math.round(n)) + " " + u[i];
+}
+function splitSize(b) {
+  const s = fmt(b); const i = s.lastIndexOf(" ");
+  return i < 0 ? [s, ""] : [s.slice(0, i), s.slice(i + 1)];
+}
+function when(ts) {
+  const d = new Date(ts), n = new Date();
+  return d.toLocaleDateString(undefined, { day:"numeric", month:"short", ...(d.getFullYear()===n.getFullYear()?{}:{year:"numeric"}) });
+}
+const extOf = (n) => { const m = /\.([A-Za-z0-9]{1,5})$/.exec(n || ""); return m ? m[1].slice(0,4) : "?"; };
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const errText = (e) => (e && (e.message || e.description)) ? (e.message || e.description) : (typeof e === "string" ? e : "Something went wrong");
+
+/* --------------------------------------------------------------- state */
+let keys = lsGet(KEYS_LS);
+let client = null, me = null, savedChatId = null;
+let idx = { v:2, updatedAt:0, folders:[], files:[] };
+let idxMessageId = null, idxDirty = false, idxTimer = null;
+let cwd = "/";
+const sel = new Set();
+let authState = "", connState = "";
+
+/* ------------------------------------------------------------- screens */
+const SCREENS = ["booting","scrKeys","scrPhone","scrCode","scrPass","scrVault"];
+function screen(which) {
+  for (const s of SCREENS) $(s).hidden = s !== which;
+  $("logoutBtn").hidden = which !== "scrVault";
+  $("usage").hidden = which !== "scrVault";
+}
+const bootMsg = (t) => { $("bootMsg").textContent = t; };
+let toastT = null;
+function toast(m, ms = 5000) {
+  const el = $("toast"); el.textContent = m; el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), ms);
+}
+function say(id, text, kind) {
+  const el = $(id);
+  if (!text) { el.className = "msg"; el.textContent = ""; return; }
+  el.textContent = text; el.className = "msg show " + (kind || "");
+}
+function meChip() {
+  const c = $("meChip");
+  if (!me) { c.textContent = connState === "connectionStateReady" ? "signed out" : "connecting…"; c.className = "chip off"; return; }
+  const nm = [me.first_name, me.last_name].filter(Boolean).join(" ") || (me.usernames && me.usernames.editable_username) || "signed in";
+  const busy = connState && connState !== "connectionStateReady";
+  c.textContent = busy ? "connecting…" : nm;
+  c.className = busy ? "chip off" : "chip";
+}
+
+/* ============================== TDLib boot ============================= */
+async function boot() {
+  if (!keys || !keys.apiId || !keys.apiHash) { screen("scrKeys"); return; }
+  screen("booting"); bootMsg("Starting TDLib… the first load fetches about 12 MB.");
+  const TdClient = window.tdweb && (window.tdweb.default || window.tdweb);
+  if (typeof TdClient !== "function") {
+    bootMsg("tdweb.js didn't load. All four TDLib files must sit next to index.html.");
+    return;
+  }
+  try {
+    client = new TdClient({
+      instanceName: "vault",
+      mode: "wasm",
+      jsLogVerbosityLevel: "error",
+      logVerbosityLevel: 1,
+      useDatabase: true,
+      readOnly: false,
+      isBackground: false,
+      onUpdate: onUpdate
+    });
+    client.onUpdate = onUpdate;
+  } catch (e) {
+    bootMsg("TDLib wouldn't start: " + errText(e));
+  }
+}
+
+function onUpdate(u) {
+  const t = u["@type"];
+  if (t === "updateAuthorizationState") { onAuth(u.authorization_state); return; }
+  if (t === "updateFile") { fileTick(u.file); return; }
+  if (t === "updateMessageSendSucceeded") { sendResolve(u.old_message_id, u.message); return; }
+  if (t === "updateMessageSendFailed") { sendReject(u.old_message_id, u.error); return; }
+  if (t === "updateConnectionState") { connState = u.state["@type"]; meChip(); return; }
+}
+
+async function setParams() {
+  const flat = {
+    "@type": "setTdlibParameters",
+    use_test_dc: false,
+    database_directory: "/db",
+    files_directory: "/files",
+    database_encryption_key: "",
+    use_file_database: true,
+    use_chat_info_database: true,
+    use_message_database: true,
+    use_secret_chats: false,
+    api_id: Number(keys.apiId),
+    api_hash: String(keys.apiHash),
+    system_language_code: navigator.language || "en",
+    device_model: "Web",
+    system_version: "",
+    application_version: "vault-1.0"
+  };
+  try {
+    await client.send(flat);
+  } catch (e) {
+    // Older TDLib builds nest the parameters and want a separate key check.
+    const { "@type": _drop, ...rest } = flat;
+    await client.send({ "@type": "setTdlibParameters",
+      parameters: { ...rest, enable_storage_optimizer: true, ignore_file_names: false } });
+  }
+}
+
+async function onAuth(st) {
+  authState = st["@type"];
+  try {
+    switch (authState) {
+      case "authorizationStateWaitTdlibParameters":
+        await setParams(); break;
+      case "authorizationStateWaitEncryptionKey":
+        await client.send({ "@type": "checkDatabaseEncryptionKey", encryption_key: "" }); break;
+      case "authorizationStateWaitPhoneNumber":
+        me = null; meChip(); screen("scrPhone"); break;
+      case "authorizationStateWaitCode": {
+        const ci = st.code_info || {};
+        const tt = (ci.type && ci.type["@type"]) || "";
+        $("codeHint").textContent =
+          tt === "authenticationCodeTypeSms" ? `Telegram texted a code to ${ci.phone_number || "your phone"}.`
+          : tt === "authenticationCodeTypeCall" ? "Telegram is calling you with a code."
+          : `Check your other Telegram app for a login code${ci.phone_number ? " sent to " + ci.phone_number : ""}.`;
+        screen("scrCode"); say("mCode", "", ""); break;
+      }
+      case "authorizationStateWaitPassword": {
+        const h = st.password_hint;
+        $("passHint").textContent = h ? `This account has two-step verification. Hint: ${h}` : "This account has two-step verification enabled.";
+        screen("scrPass"); say("mPass", "", ""); break;
+      }
+      case "authorizationStateWaitRegistration":
+        screen("scrPhone");
+        say("mPhone", "That number has no Telegram account yet. Sign up in the Telegram app first, then come back.", "bad");
+        break;
+      case "authorizationStateReady":
+        await onReady(); break;
+      case "authorizationStateClosed":
+        me = null; meChip(); screen("scrKeys"); break;
+    }
+  } catch (e) {
+    const m = errText(e);
+    if (authState === "authorizationStateWaitTdlibParameters") bootMsg("TDLib rejected the API keys: " + m);
+    else toast(m);
+  }
+}
+
+async function onReady() {
+  screen("booting"); bootMsg("Opening your Saved Messages…");
+  me = await client.send({ "@type": "getMe" });
+  meChip();
+  const chat = await client.send({ "@type": "createPrivateChat", user_id: me.id, force: true });
+  savedChatId = chat.id;
+
+  const cached = lsGet(IDX_LS);
+  if (cached && Array.isArray(cached.files)) idx = normalize(cached);
+  screen("scrVault"); render();
+  bootMsg("");
+
+  try { await loadIndex(); }
+  catch (e) { toast("Couldn't read the index from Telegram: " + errText(e)); }
+}
+
+function normalize(d) {
+  return {
+    v: 2, updatedAt: d.updatedAt || 0,
+    folders: Array.isArray(d.folders) ? d.folders.filter(x => typeof x === "string" && x.startsWith("/")) : [],
+    files: (Array.isArray(d.files) ? d.files : []).filter(f => f && f.id && f.name).map(f => ({
+      id: f.id, name: f.name, path: f.path && f.path.startsWith("/") ? f.path : "/",
+      size: Number(f.size) || 0, mime: f.mime || "application/octet-stream",
+      remoteId: f.remoteId || null, messageId: f.messageId || null, createdAt: f.createdAt || Date.now()
+    }))
+  };
+}
+
+/* ============================ auth screens ============================= */
+$("keysBtn").onclick = () => {
+  const id = $("apiId").value.trim(), hash = $("apiHash").value.trim();
+  if (!/^\d{4,12}$/.test(id)) return say("mKeys", "api_id should be a number, roughly 6–8 digits.", "bad");
+  if (!/^[a-f0-9]{32}$/i.test(hash)) return say("mKeys", "api_hash should be 32 hex characters.", "bad");
+  keys = { apiId: id, apiHash: hash };
+  lsSet(KEYS_LS, keys);
+  say("mKeys", "Saved. Starting TDLib…", "ok");
+  boot();
+};
+$("editKeysBtn").onclick = () => { if (keys) { $("apiId").value = keys.apiId; $("apiHash").value = keys.apiHash; } screen("scrKeys"); };
+
+$("phoneBtn").onclick = async () => {
+  const p = $("phone").value.trim().replace(/[\s()-]/g, "");
+  if (!/^\+?\d{7,15}$/.test(p)) return say("mPhone", "Enter the number with its country code, like +919876543210.", "bad");
+  $("phoneBtn").disabled = true; say("mPhone", "Asking Telegram for a code…", "");
+  try { await client.send({ "@type": "setAuthenticationPhoneNumber", phone_number: p }); }
+  catch (e) { say("mPhone", errText(e), "bad"); }
+  finally { $("phoneBtn").disabled = false; }
+};
+$("phone").addEventListener("keydown", e => { if (e.key === "Enter") $("phoneBtn").click(); });
+
+$("codeBtn").onclick = async () => {
+  const c = $("code").value.trim();
+  if (!/^\d{4,6}$/.test(c)) return say("mCode", "The code is 5 digits.", "bad");
+  $("codeBtn").disabled = true; say("mCode", "Checking…", "");
+  try { await client.send({ "@type": "checkAuthenticationCode", code: c }); }
+  catch (e) {
+    const m = errText(e);
+    say("mCode", /PHONE_CODE_INVALID|invalid/i.test(m) ? "That code isn't right. Check the newest message." : m, "bad");
+  } finally { $("codeBtn").disabled = false; }
+};
+$("code").addEventListener("keydown", e => { if (e.key === "Enter") $("codeBtn").click(); });
+$("backPhoneBtn").onclick = () => { $("code").value = ""; screen("scrPhone"); };
+
+$("passBtn").onclick = async () => {
+  const p = $("pass").value;
+  if (!p) return say("mPass", "Enter your two-step verification password.", "bad");
+  $("passBtn").disabled = true; say("mPass", "Checking…", "");
+  try { await client.send({ "@type": "checkAuthenticationPassword", password: p }); $("pass").value = ""; }
+  catch (e) {
+    const m = errText(e);
+    say("mPass", /PASSWORD_HASH_INVALID|invalid/i.test(m) ? "That password isn't right." : m, "bad");
+  } finally { $("passBtn").disabled = false; }
+};
+$("pass").addEventListener("keydown", e => { if (e.key === "Enter") $("passBtn").click(); });
+
+$("logoutBtn").onclick = async () => {
+  if (queue.length || running) { if (!confirm("Transfers are still running. Log out anyway?")) return; }
+  try { await client.send({ "@type": "logOut" }); } catch (_) {}
+  me = null; meChip(); screen("scrPhone");
+  toast("Signed out of this browser. Everything in Saved Messages is untouched.");
+};
+$("wipeBtn").onclick = async () => {
+  if (!confirm("Log out and delete the local TDLib database from this browser?\n\nYour files and the index stay in Saved Messages.")) return;
+  try { await client.send({ "@type": "logOut" }); } catch (_) {}
+  try { await client.send({ "@type": "close" }); } catch (_) {}
+  localStorage.removeItem(IDX_LS);
+  for (const n of ["/tdlib", "tdlib", "vault", "keyval-store", "tdweb"]) { try { indexedDB.deleteDatabase(n); } catch (_) {} }
+  toast("Wiped. Reloading…");
+  setTimeout(() => location.reload(), 1200);
+};
+
+/* ======================= file transfer plumbing ======================== */
+const watchers = new Map();               // tdlib file id -> callback
+const watchFile = (id, cb) => watchers.set(id, cb);
+const unwatchFile = (id) => watchers.delete(id);
+function fileTick(f) { const cb = watchers.get(f.id); if (cb) { try { cb(f); } catch (_) {} } }
+
+const sends = new Map();                  // temp message id -> {res, rej}
+function waitSend(tempId) {
+  return new Promise((res, rej) => sends.set(tempId, { res, rej }));
+}
+function sendResolve(oldId, message) { const h = sends.get(oldId); if (h) { sends.delete(oldId); h.res(message); } }
+function sendReject(oldId, err) { const h = sends.get(oldId); if (h) { sends.delete(oldId); h.rej(new Error(errText(err))); } }
+
+const docOf = (m) => (m && m.content && m.content.document) || null;
+
+/* Read a downloaded TDLib file out of the browser filesystem.
+   Big files are pulled in parts so a 2 GB video never sits in one buffer. */
+async function readOut(fileId, size, sink) {
+  if (size > READ_PART) {
+    let usedParts = false;
+    try {
+      for (let off = 0; off < size; off += READ_PART) {
+        const count = Math.min(READ_PART, size - off);
+        const r = await client.send({ "@type": "readFilePart", file_id: fileId, offset: off, count });
+        if (!r || !r.data) throw new Error("no data in part");
+        await sink(r.data);
+        usedParts = true;
+      }
+      return;
+    } catch (e) {
+      if (usedParts) throw e;          // committed to parts already; don't double-write
+    }
+  }
+  const r = await client.send({ "@type": "readFile", file_id: fileId });
+  if (!r || !r.data) throw new Error("TDLib downloaded the file but handed back no data.");
+  await sink(r.data);
+}
+
+function saveBlob(blob, name) {
+  const a = document.createElement("a"), url = URL.createObjectURL(blob);
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+/* =============================== queue ================================= */
+const queue = [];
+let running = false;
+function enqueue(fn) { queue.push(fn); qSummary(); pump(); }
+async function pump() {
+  if (running) return;
+  running = true;
+  while (queue.length) { const t = queue.shift(); qSummary(); try { await t(); } catch (_) {} }
+  running = false; qSummary();
+}
+function qSummary() {
+  const rows = $("xfer").children.length;
+  $("qCard").hidden = rows === 0;
+  $("qSum").textContent = queue.length ? `${queue.length} waiting` : (running ? "working…" : "");
+}
+function qRow(name, dir, total) {
+  const el = document.createElement("div");
+  el.className = "xrow wait " + dir;
+  el.innerHTML = `
+    <div class="xtop">
+      <span class="dir">${dir === "up" ? "up" : "down"}</span>
+      <span class="xname">${esc(name)}</span>
+      <span class="xstat">waiting</span>
+    </div>
+    <div class="bar"><i></i></div>
+    <div class="xerr" hidden></div>`;
+  $("xfer").prepend(el);
+  qSummary();
+  return {
+    el,
+    start() { el.classList.remove("wait"); el.querySelector(".xstat").textContent = "starting…"; },
+    set(p, t) {
+      el.classList.remove("wait");
+      el.querySelector(".bar i").style.width = Math.max(0, Math.min(100, p * 100)) + "%";
+      if (t) el.querySelector(".xstat").textContent = t;
+    },
+    fail(t) {
+      el.classList.add("err"); el.querySelector(".xstat").textContent = "failed";
+      const e = el.querySelector(".xerr"); e.textContent = t; e.hidden = false;
+    },
+    done() { el.dataset.finished = "1"; setTimeout(() => { el.remove(); qSummary(); }, 2500); }
+  };
+}
+$("qClearBtn").onclick = () => {
+  [...$("xfer").children].forEach(c => { if (c.dataset.finished || c.classList.contains("err")) c.remove(); });
+  qSummary();
+};
+
+/* =============================== upload ================================ */
+function queueUpload(file, path) {
+  const row = qRow(file.name, "up", file.size);
+  enqueue(async () => {
+    row.start();
+    try {
+      const content = {
+        "@type": "inputMessageDocument",
+        document: { "@type": "inputFileBlob", name: file.name, data: file },
+        disable_content_type_detection: true,
+        caption: { "@type": "formattedText", entities: [],
+          text: `${file.name}\n${fmt(file.size)}${path !== "/" ? "\n" + path : ""}` }
+      };
+      const provisional = await client.send({ "@type": "sendMessage", chat_id: savedChatId, input_message_content: content });
+      const d0 = docOf(provisional);
+      const localId = d0 && d0.document && d0.document.id;
+      if (localId != null) watchFile(localId, f => {
+        const up = (f.remote && f.remote.uploaded_size) || 0;
+        row.set(up / Math.max(1, file.size), `${fmt(up)} of ${fmt(file.size)}`);
+      });
+
+      const final = await waitSend(provisional.id);
+      if (localId != null) unwatchFile(localId);
+
+      const doc = docOf(final);
+      if (!doc || !doc.document || !doc.document.remote || !doc.document.remote.id) {
+        throw new Error("Telegram stored the file but returned no reference for it.");
+      }
+      idx.files.push({
+        id: uid(), name: file.name, path, size: doc.document.size || file.size,
+        mime: file.type || "application/octet-stream",
+        remoteId: doc.document.remote.id, messageId: final.id, createdAt: Date.now()
+      });
+      touchIdx();
+      row.set(1, "done"); row.done();
+    } catch (e) {
+      row.fail(errText(e));
+    }
+  });
+}
+
+/* ============================== download =============================== */
+function queueDownload(rec) {
+  const row = qRow(rec.name, "dn", rec.size);
+  enqueue(async () => {
+    row.start();
+    let writable = null, fileId = null;
+    try {
+      if (window.showSaveFilePicker) {
+        try {
+          const h = await window.showSaveFilePicker({ suggestedName: rec.name });
+          writable = await h.createWritable();
+        } catch (e) {
+          if (e && e.name === "AbortError") { row.el.remove(); qSummary(); return; }
+          writable = null;
+        }
+      }
+      const f = await client.send({ "@type": "getRemoteFile", remote_file_id: rec.remoteId, file_type: { "@type": "fileTypeDocument" } });
+      fileId = f.id;
+      watchFile(fileId, fo => {
+        const d = (fo.local && fo.local.downloaded_size) || 0;
+        row.set(d / Math.max(1, rec.size), `${fmt(d)} of ${fmt(rec.size)}`);
+      });
+      await client.send({ "@type": "downloadFile", file_id: fileId, priority: 1, offset: 0, limit: 0, synchronous: true });
+      unwatchFile(fileId);
+
+      row.set(1, "saving…");
+      const parts = [];
+      await readOut(fileId, rec.size, async (b) => { if (writable) await writable.write(b); else parts.push(b); });
+      if (writable) { await writable.close(); writable = null; }
+      else saveBlob(new Blob(parts, { type: rec.mime }), rec.name);
+
+      row.set(1, "done"); row.done();
+    } catch (e) {
+      if (writable) { try { await writable.abort(); } catch (_) {} }
+      row.fail(errText(e));
+    } finally {
+      if (fileId != null) {
+        unwatchFile(fileId);
+        try { await client.send({ "@type": "deleteFile", file_id: fileId }); } catch (_) {}
+      }
+    }
+  });
+}
+
+/* ================================ index ================================ */
+function totalBytes() { return idx.files.reduce((a, f) => a + (f.size || 0), 0); }
+
+function touchIdx() {
+  idx.updatedAt = Date.now();
+  idxDirty = true;
+  lsSet(IDX_LS, idx);
+  render();
+  clearTimeout(idxTimer);
+  idxTimer = setTimeout(() => { saveIndex().catch(e => toast("Couldn't save the index: " + errText(e))); }, 2500);
+}
+
+async function saveIndex() {
+  if (!savedChatId) return;
+  const payload = JSON.stringify({ v: 2, updatedAt: Date.now(), folders: idx.folders, files: idx.files });
+  const blob = new Blob([payload], { type: "application/json" });
+  const provisional = await client.send({ "@type": "sendMessage", chat_id: savedChatId, input_message_content: {
+    "@type": "inputMessageDocument",
+    document: { "@type": "inputFileBlob", name: IDX_NAME, data: blob },
+    disable_content_type_detection: true,
+    caption: { "@type": "formattedText", entities: [],
+      text: `${IDX_NAME} · ${idx.files.length} file${idx.files.length === 1 ? "" : "s"} · ${fmt(totalBytes())}` }
+  }});
+  const final = await waitSend(provisional.id);
+  const prev = idxMessageId;
+  idxMessageId = final.id;
+  try {
+    await client.send({ "@type": "pinChatMessage", chat_id: savedChatId, message_id: final.id, disable_notification: true, only_for_self: false });
+  } catch (_) { /* pin is a convenience; the filename search still finds it */ }
+  if (prev && prev !== final.id) {
+    try { await client.send({ "@type": "deleteMessages", chat_id: savedChatId, message_ids: [prev], revoke: true }); } catch (_) {}
+  }
+  idxDirty = false;
+  lsSet(IDX_LS, idx);
+  paintIdx();
+}
+
+const isIndexMsg = (m) => {
+  const d = docOf(m);
+  return !!(d && d.file_name === IDX_NAME);
+};
+
+async function loadIndex() {
+  let m = null;
+  try {
+    const chat = await client.send({ "@type": "getChat", chat_id: savedChatId });
+    if (chat && chat.pinned_message_id) {
+      try { const pin = await client.send({ "@type": "getMessage", chat_id: savedChatId, message_id: chat.pinned_message_id }); if (isIndexMsg(pin)) m = pin; } catch (_) {}
+    }
+  } catch (_) {}
+  if (!m) {
+    const r = await client.send({ "@type": "searchChatMessages", chat_id: savedChatId, query: IDX_NAME,
+      sender_id: null, from_message_id: 0, offset: 0, limit: 60,
+      filter: { "@type": "searchMessagesFilterDocument" }, message_thread_id: 0 });
+    m = ((r && r.messages) || []).find(isIndexMsg) || null;
+  }
+  if (!m) { idxMessageId = null; paintIdx(); return; }
+
+  idxMessageId = m.id;
+  const doc = docOf(m).document;
+  const f = doc.remote && doc.remote.id
+    ? await client.send({ "@type": "getRemoteFile", remote_file_id: doc.remote.id, file_type: { "@type": "fileTypeDocument" } })
+    : doc;
+  await client.send({ "@type": "downloadFile", file_id: f.id, priority: 32, offset: 0, limit: 0, synchronous: true });
+  let text = "";
+  await readOut(f.id, doc.size || 0, async (b) => { text += await b.text(); });
+  try { await client.send({ "@type": "deleteFile", file_id: f.id }); } catch (_) {}
+
+  const data = JSON.parse(text);
+  if (!data || !Array.isArray(data.files)) throw new Error("The pinned index isn't readable.");
+  const remote = normalize(data);
+  // A newer local state that hasn't been pushed yet wins, so an in-flight
+  // upload isn't wiped by a stale pinned copy.
+  if (!idxDirty || (remote.updatedAt || 0) >= (idx.updatedAt || 0)) idx = remote;
+  lsSet(IDX_LS, idx);
+  render();
+}
+
+$("saveIdxBtn").onclick = async () => {
+  say("mIdx", "Saving…", "");
+  try { await saveIndex(); say("mIdx", "Index saved and pinned in Saved Messages.", "ok"); }
+  catch (e) { say("mIdx", errText(e), "bad"); }
+};
+$("reloadIdxBtn").onclick = async () => {
+  say("mIdx", "Reading from Telegram…", "");
+  try { idxDirty = false; await loadIndex(); say("mIdx", `Loaded ${idx.files.length} file${idx.files.length === 1 ? "" : "s"}.`, "ok"); }
+  catch (e) { say("mIdx", errText(e), "bad"); }
+};
+$("exportIdxBtn").onclick = () => {
+  saveBlob(new Blob([JSON.stringify({ v:2, updatedAt: idx.updatedAt, folders: idx.folders, files: idx.files }, null, 2)], { type:"application/json" }), IDX_NAME);
+  say("mIdx", "Copy downloaded.", "ok");
+};
+function paintIdx() {
+  $("idxLine").innerHTML = idxMessageId
+    ? `Pinned in Saved Messages${idx.updatedAt ? `, last written ${new Date(idx.updatedAt).toLocaleString()}` : ""}. <b>${idx.files.length}</b> file${idx.files.length===1?"":"s"}, <b>${fmt(totalBytes())}</b>.`
+    : "Not written yet — it appears the first time you upload something.";
+  $("devLine").innerHTML = me
+    ? `Signed in as <b>${esc([me.first_name, me.last_name].filter(Boolean).join(" ") || "you")}</b>. TDLib keeps its session in this browser, so you won't be asked for a code again here.`
+    : "Not signed in.";
+}
+
+/* =============================== folders =============================== */
+const norm = (p) => { p = "/" + String(p).split("/").filter(Boolean).join("/"); return p === "//" ? "/" : p; };
+const join = (a, b) => norm(a === "/" ? "/" + b : a + "/" + b);
+
+function childFolders(p) {
+  const pre = p === "/" ? "/" : p + "/";
+  const out = new Set();
+  const add = (full) => {
+    if (!full.startsWith(pre) || full === p) return;
+    const seg = full.slice(pre.length).split("/")[0];
+    if (seg) out.add(pre + seg);
+  };
+  idx.folders.forEach(add);
+  idx.files.forEach(f => add(f.path));
+  return [...out].sort((a, b) => a.localeCompare(b));
+}
+const filesIn = (p) => idx.files.filter(f => f.path === p);
+function subtreeFiles(p) {
+  const pre = p === "/" ? "/" : p + "/";
+  return idx.files.filter(f => f.path === p || f.path.startsWith(pre));
+}
+
+$("newFolderBtn").onclick = () => {
+  const name = prompt("Folder name");
+  if (!name) return;
+  const clean = name.replace(/[\/\\]+/g, "-").trim();
+  if (!clean) return;
+  const p = join(cwd, clean);
+  if (idx.folders.includes(p) || childFolders(cwd).includes(p)) return toast("There's already a folder with that name here.");
+  idx.folders.push(p);
+  touchIdx();
+};
+
+async function deleteFolder(p) {
+  const files = subtreeFiles(p);
+  const label = p.split("/").pop();
+  if (!confirm(`Delete the folder "${label}"?\n\n${files.length} file${files.length === 1 ? "" : "s"} inside will be deleted from Saved Messages too.`)) return;
+  await deleteRecords(files, true);
+  const pre = p + "/";
+  idx.folders = idx.folders.filter(f => f !== p && !f.startsWith(pre));
+  touchIdx();
+}
+
+/* ============================ delete files ============================= */
+async function deleteRecords(recs, quiet) {
+  if (!recs.length) return;
+  const ids = recs.map(r => r.messageId).filter(x => x != null);
+  let failed = 0;
+  for (let i = 0; i < ids.length; i += 100) {
+    try { await client.send({ "@type": "deleteMessages", chat_id: savedChatId, message_ids: ids.slice(i, i + 100), revoke: true }); }
+    catch (_) { failed += ids.slice(i, i + 100).length; }
+  }
+  const gone = new Set(recs.map(r => r.id));
+  idx.files = idx.files.filter(f => !gone.has(f.id));
+  recs.forEach(r => sel.delete(r.id));
+  touchIdx();
+  if (!quiet) {
+    toast(failed ? `Removed ${recs.length - failed}. ${failed} couldn't be deleted from Telegram — they're out of the index but still in Saved Messages.`
+                 : `Deleted ${recs.length} file${recs.length === 1 ? "" : "s"}.`);
+  }
+}
+
+/* ============================== selection ============================== */
+function selBar() {
+  const n = sel.size;
+  $("selbar").hidden = n === 0;
+  $("selCnt").textContent = `${n} selected · ${fmt(idx.files.filter(f => sel.has(f.id)).reduce((a, f) => a + f.size, 0))}`;
+}
+$("selAllBtn").onclick = () => { visibleFiles().forEach(f => sel.add(f.id)); render(); };
+$("selNoneBtn").onclick = () => { sel.clear(); render(); };
+$("dlSelBtn").onclick = () => {
+  const recs = idx.files.filter(f => sel.has(f.id));
+  if (!recs.length) return;
+  recs.forEach(queueDownload);
+  toast(`Queued ${recs.length} download${recs.length === 1 ? "" : "s"}. They save one after another.`);
+  sel.clear(); render();
+};
+$("delSelBtn").onclick = async () => {
+  const recs = idx.files.filter(f => sel.has(f.id));
+  if (!recs.length) return;
+  if (!confirm(`Delete ${recs.length} file${recs.length === 1 ? "" : "s"} from Saved Messages?`)) return;
+  await deleteRecords(recs);
+};
+
+/* =============================== render ================================ */
+function visibleFiles() {
+  const q = $("search").value.trim().toLowerCase();
+  let list = q ? idx.files.filter(f => f.name.toLowerCase().includes(q)) : filesIn(cwd);
+  return list.slice().sort((a, b) => b.createdAt - a.createdAt);
+}
+function render() {
+  const [n, u] = splitSize(totalBytes());
+  $("uNum").textContent = n; $("uUnit").textContent = u;
+  $("uCount").textContent = `${idx.files.length} file${idx.files.length === 1 ? "" : "s"}`;
+
+  const parts = cwd === "/" ? [] : cwd.split("/").filter(Boolean);
+  let acc = "";
+  const crumbs = [`<button data-p="/">Saved Messages</button>`];
+  parts.forEach((seg, i) => {
+    acc += "/" + seg;
+    crumbs.push(`<span class="sep">/</span>`);
+    crumbs.push(i === parts.length - 1 ? `<span class="here">${esc(seg)}</span>` : `<button data-p="${esc(acc)}">${esc(seg)}</button>`);
+  });
+  $("crumbs").innerHTML = crumbs.join("");
+  $("crumbs").querySelectorAll("button").forEach(b => b.onclick = () => { cwd = b.dataset.p; sel.clear(); $("search").value = ""; render(); });
+
+  const q = $("search").value.trim();
+  const folders = q ? [] : childFolders(cwd);
+  const files = visibleFiles();
+  const list = $("list");
+  $("selAllBtn").hidden = files.length === 0;
+
+  if (!folders.length && !files.length) {
+    list.innerHTML = `<div class="empty">${q ? `Nothing matches “${esc(q)}”.`
+      : cwd === "/" ? "Nothing here yet. Drop a file above and it goes straight into your Saved Messages."
+      : "This folder is empty."}</div>`;
+    selBar(); paintIdx(); return;
+  }
+
+  const folderRows = folders.map(p => {
+    const inside = subtreeFiles(p);
+    const label = p.split("/").pop();
+    return `<div class="frow folder" data-folder="${esc(p)}">
+      <span></span>
+      <div class="ft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      <div class="fmeta">
+        <div class="fname link">${esc(label)}</div>
+        <div class="fsub">${inside.length} file${inside.length === 1 ? "" : "s"}<span class="dot">·</span>${fmt(inside.reduce((a, f) => a + f.size, 0))}</div>
+      </div>
+      <div class="facts"><button class="btn sm danger" data-act="delfolder">Delete</button></div>
+    </div>`;
+  }).join("");
+
+  const fileRows = files.map(f => `
+    <div class="frow${sel.has(f.id) ? " sel" : ""}" data-id="${esc(f.id)}">
+      <input class="cbx" type="checkbox" ${sel.has(f.id) ? "checked" : ""} aria-label="Select ${esc(f.name)}">
+      <div class="ft">${esc(extOf(f.name))}</div>
+      <div class="fmeta">
+        <div class="fname" title="${esc(f.name)}">${esc(f.name)}</div>
+        <div class="fsub">${fmt(f.size)}<span class="dot">·</span>${when(f.createdAt)}${q && f.path !== "/" ? `<span class="dot">·</span>${esc(f.path)}` : ""}${f.remoteId ? "" : `<span class="dot">·</span><span class="bad">no reference</span>`}</div>
+      </div>
+      <div class="facts">
+        <button class="btn sm quiet" data-act="get">Download</button>
+        <button class="btn sm danger" data-act="del">Delete</button>
+      </div>
+    </div>`).join("");
+
+  list.innerHTML = folderRows + fileRows;
+
+  list.querySelectorAll("[data-folder] .fname").forEach(el => el.onclick = () => {
+    cwd = el.closest("[data-folder]").dataset.folder; sel.clear(); render();
+  });
+  list.querySelectorAll('[data-folder] [data-act="delfolder"]').forEach(b => b.onclick = () => deleteFolder(b.closest("[data-folder]").dataset.folder));
+  list.querySelectorAll(".cbx").forEach(cb => cb.onchange = () => {
+    const id = cb.closest(".frow").dataset.id;
+    cb.checked ? sel.add(id) : sel.delete(id);
+    cb.closest(".frow").classList.toggle("sel", cb.checked);
+    selBar();
+  });
+  list.querySelectorAll('[data-id] [data-act]').forEach(b => b.onclick = async () => {
+    const id = b.closest(".frow").dataset.id;
+    const rec = idx.files.find(f => f.id === id);
+    if (!rec) return;
+    if (b.dataset.act === "get") queueDownload(rec);
+    if (b.dataset.act === "del") { if (confirm(`Delete "${rec.name}" from Saved Messages?`)) await deleteRecords([rec]); }
+  });
+
+  selBar(); paintIdx();
+}
+$("search").addEventListener("input", render);
+
+/* ============================= file picking ============================ */
+$("pickBtn").onclick = () => $("fileInput").click();
+$("fileInput").onchange = (e) => {
+  const files = [...e.target.files]; e.target.value = "";
+  files.forEach(f => f.size === 0 ? toast(`"${f.name}" is empty, so there was nothing to send.`) : queueUpload(f, cwd));
+};
+const drop = $("drop");
+["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("hot"); }));
+["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("hot"); }));
+drop.addEventListener("drop", e => {
+  [...(e.dataTransfer ? e.dataTransfer.files : [])].forEach(f => f.size === 0 ? null : queueUpload(f, cwd));
+});
+["dragover","drop"].forEach(ev => window.addEventListener(ev, e => {
+  if (e.target.closest && e.target.closest("#drop")) return;
+  e.preventDefault();
+}));
+window.addEventListener("beforeunload", (e) => {
+  if (queue.length || running || idxDirty) { e.preventDefault(); e.returnValue = ""; }
+});
+
+/* ============================ service worker =========================== */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+
+/* ================================ start ================================ */
+if (keys) { $("apiId").value = keys.apiId || ""; $("apiHash").value = keys.apiHash || ""; }
+boot();
+
+/* Testing seam for the project's automated checks. */
+window.__vault = {
+  state: () => ({ idx, cwd, sel: [...sel], authState, savedChatId, idxMessageId, queued: queue.length, running }),
+  setCwd(p) { cwd = p; sel.clear(); render(); },
+  upload: queueUpload, download: queueDownload,
+  saveIndex, loadIndex, render,
+  drain: async () => { for (let i = 0; i < 600 && (queue.length || running); i++) await sleep(50); }
+};
+})();
+
+</script>
+</body>
+</html>
