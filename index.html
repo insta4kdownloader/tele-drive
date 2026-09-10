@@ -1559,7 +1559,7 @@ $("delSel").onclick=async()=>{
   if(navView==="trash")await confirmForever(recs); else trashRecords(recs);
 };
 $("starSel").onclick=()=>toggleStar(picked());
-$("moveSel").onclick=()=>moveDialog(picked());
+$("moveSel").onclick=()=>{if(menuEl){closeMenu();return}moveDialog(picked())};
 $("infoSel").onclick=()=>{const r=picked();if(r.length===1)showDetails(r[0])};
 ["navMine","navAll","navStar","navTrash","navRecent"].forEach(id=>$(id).onclick=()=>{
   $("search").value="";$("clearSearch").hidden=true;
@@ -1596,10 +1596,15 @@ $("pvBody").addEventListener("touchend",e=>{
   if(Date.now()-tt<700 && Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)*1.6) pvStep(dx<0?1:-1);
 },{passive:true});
 
-let menuEl=null;
-function closeMenu(){if(menuEl){menuEl.remove();menuEl=null}}
-function openMenu(x,y,items){
+let menuEl=null,menuAnchor=null,menuOff=null;
+function closeMenu(){
+  if(menuOff){document.removeEventListener("click",menuOff,true);menuOff=null}
+  if(menuEl){menuEl.remove();menuEl=null}
+  menuAnchor=null;
+}
+function openMenu(x,y,items,anchor){
   closeMenu();
+  menuAnchor=anchor||null;
   menuEl=document.createElement("div");
   menuEl.className="menu";
   menuEl.innerHTML=items.map((it,i)=>it.sep?`<div class="sep"></div>`
@@ -1615,15 +1620,25 @@ function openMenu(x,y,items){
     const it=items[+b.dataset.i];closeMenu();it.act&&it.act();
   });
   menuEl.addEventListener("click",e=>e.stopPropagation());
+  // Attach the outside-click closer on the NEXT tick, so the very click that
+  // opened this menu cannot immediately close it again. Relying on each caller
+  // to remember stopPropagation is what broke Move from the selection bar.
+  setTimeout(()=>{
+    if(!menuEl)return;
+    menuOff=(ev)=>{
+      if(menuEl&&(menuEl.contains(ev.target)||(menuAnchor&&menuAnchor.contains(ev.target))))return;
+      closeMenu();
+    };
+    document.addEventListener("click",menuOff,true);
+  },0);
 }
 $("newBtn").onclick=(e)=>{
   if(menuEl){closeMenu();return}
-  e.stopPropagation();
   const b=e.currentTarget.getBoundingClientRect();
   openMenu(b.left,b.bottom+6,[
     {icon:"up",label:"File upload",act:()=>$("fileInput").click()},
     {icon:"newfolder",label:"New folder",act:createFolder}
-  ]);
+  ],e.currentTarget);
 };
 function fileMenu(x,y,rec){
   const inTrash=!!rec.trashed;
@@ -1653,7 +1668,6 @@ function folderMenu(x,y,path){
     {icon:"trash",label:"Delete folder",danger:true,act:()=>deleteFolder(path)}
   ]);
 }
-document.addEventListener("click",()=>closeMenu());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
 
 /* ---------------------------- file operations ------------------------- */
@@ -1690,8 +1704,10 @@ function moveDialog(recs){
       toast(`Moved ${recs.length} item${recs.length===1?"":"s"} to ${p==="/"?"My Vault":p.split("/").pop()}.`);
     }
   }));
-  const b=$("moveSel").getBoundingClientRect();
-  openMenu(b.left||120,(b.bottom||120)+6,items);
+  const el=$("moveSel"), b=el.getBoundingClientRect();
+  const vis=b.width>0;
+  openMenu(vis?b.left:Math.round(window.innerWidth/2-110),
+           (vis?b.bottom:120)+6, items, vis?el:null);
 }
 function toggleStar(recs){
   if(!recs.length)return;
