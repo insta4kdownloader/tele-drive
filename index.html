@@ -859,9 +859,8 @@ async function onReady(){
   screen("booting");bootMsg("Opening your Saved Messages…");
   me=await client.send({"@type":"getMe"});paintMe();
   savedChatId=(await client.send({"@type":"createPrivateChat",user_id:me.id,force:true})).id;
-  // keep TDLib's on-device media cache bounded, since small files are now kept
-  client.send({"@type":"optimizeStorage",size:512*1024*1024,ttl:0,count:0,immunity_delay:0,
-    file_types:[],chat_ids:[],exclude_chat_ids:[],return_deleted_file_statistics:false,chat_limit:0}).catch(()=>{});
+  // NB: tdweb explicitly does not implement optimizeStorage, so the on-device
+  // cache is bounded by evicting anything over KEEP_LOCAL_UNDER after reading.
   const cached=await idxCacheGet();
   if(cached&&Array.isArray(cached.files)){idx=normalize(cached);idxFromCache=true;idxMessageId=lsGet(MSG_LS)||null}
   screen("scrVault");render();
@@ -1016,20 +1015,47 @@ function saveBlob(blob,name){
 }
 
 /* =============================== queue ================================ */
-const queue=[];let running=false;
-function enqueue(fn){queue.push(fn);tHead();pump()}
-async function pump(){
-  if(running)return;running=true;
-  while(queue.length){const t=queue.shift();tHead();try{await t()}catch(_){}}
-  running=false;tHead();
+/* Uploads used to run strictly one at a time, which wastes most of the
+   round-trip on small files. Telegram handles several in flight fine, so
+   uploads run 3-wide. Downloads stay serial: each opens its own save dialog
+   and streams to disk. */
+const lanes={up:{q:[],running:0,max:3},dn:{q:[],running:0,max:1}};
+function busyTransferring(){
+  return lanes.up.running+lanes.dn.running+lanes.up.q.length+lanes.dn.q.length>0;
+}
+function enqueue(fn,lane){(lanes[lane]||lanes.up).q.push(fn);tHead();pump(lane||"up")}
+function pump(lane){
+  const L=lanes[lane];if(!L)return;
+  while(L.running<L.max&&L.q.length){
+    const t=L.q.shift();L.running++;tHead();
+    (async()=>{
+      try{await t()}catch(_){}
+      finally{
+        L.running--;tHead();
+        if(L.q.length)pump(lane);
+        else if(!busyTransferring()&&viewDirty){viewDirty=false;lastRenderAt=Date.now();render()}
+      }
+    })();
+  }
 }
 function tHead(){
   const n=$("tbody").children.length;
   $("tpanel").hidden=n===0;
-  const live=queue.length+(running?1:0);
-  $("tTitle").textContent=live?`${live} in progress`:(n?"Transfers complete":"Transfers");
+  const active=lanes.up.running+lanes.dn.running;
+  const waiting=lanes.up.q.length+lanes.dn.q.length;
+  $("tTitle").textContent=active
+    ? `${active} in progress${waiting?` · ${waiting} queued`:""}`
+    : (n?"Transfers complete":"Transfers");
 }
 const RING=2*Math.PI*9.5;
+function rateText(done,total,t0){
+  const secs=(Date.now()-t0)/1000;
+  if(secs<0.6||!done)return `${fmt(done)} of ${fmt(total)}`;
+  const rate=done/secs;
+  const left=rate>0?Math.max(0,(total-done)/rate):0;
+  const eta=left>90?`${Math.round(left/60)} min left`:`${Math.max(1,Math.round(left))}s left`;
+  return `${fmt(done)} of ${fmt(total)} · ${fmt(rate)}/s · ${eta}`;
+}
 function tRow(name,dir,kind){
   const el=document.createElement("div");
   el.className="trow";
@@ -1083,13 +1109,20 @@ async function frameSource(file,kind){
   v.muted=true;v.playsInline=true;v.preload="metadata";v.src=url;
   const done=()=>{try{v.removeAttribute("src");v.load()}catch(_){};URL.revokeObjectURL(url)};
   try{
-    await once(v,"loadedmetadata",9000);
+    await once(v,"loadedmetadata",4500);
     const t=Math.min(1,(isFinite(v.duration)&&v.duration>0?v.duration:4)/4);
-    const seeked=once(v,"seeked",9000);
+    const seeked=once(v,"seeked",4500);
     v.currentTime=t;
     await seeked;
     return {src:v,w:v.videoWidth,h:v.videoHeight,done};
   }catch(e){ done(); throw e; }
+}
+let thumbSlots=2;const thumbQueue=[];
+async function withThumbSlot(fn){
+  if(thumbSlots<=0)await new Promise(r=>thumbQueue.push(r));
+  thumbSlots--;
+  try{ return await fn(); }
+  finally{ thumbSlots++; const w=thumbQueue.shift(); if(w)w(); }
 }
 async function makeThumbs(file,kind){
   if(kind!=="image"&&kind!=="video")return null;
@@ -1115,18 +1148,33 @@ async function backfillThumb(rec,blob){
     const th=await makeThumbs(new File([blob],rec.name,{type:rec.mime||""}),kindOf(rec));
     if(!th||!th.b64)return;
     const f=idx.files.find(x=>x.id===rec.id);
-    if(f&&!f.thumb){f.thumb=th.b64;touchIdx()}
+    if(f&&!f.thumb){f.thumb=th.b64;touchIdxLocal()}
   }catch(_){}
 }
 
 /* =============================== upload =============================== */
+const THUMB_BUDGET=5000;
+const THUMB_INLINE_MAX=64*1024*1024;   // above this, thumbnail AFTER the upload
 function queueUpload(file,path){
   const rec0={name:file.name,mime:file.type||"application/octet-stream"};
-  const row=tRow(file.name,"up",kindOf(rec0));
+  const kind=kindOf(rec0);
+  const wantThumb=(kind==="image"||kind==="video");
+  const preThumb=wantThumb&&file.size<=THUMB_INLINE_MAX;
+  const row=tRow(file.name,"up",kind);
+  // Start thumbnailing now rather than inside the queued task, so it overlaps
+  // with files already uploading. Two at a time, and never worth more than a
+  // few seconds — a thumbnail must never hold up the bytes.
+  const thumbP=preThumb
+    ? Promise.race([
+        withThumbSlot(()=>makeThumbs(file,kind)).catch(()=>null),
+        new Promise(r=>setTimeout(()=>r(null),THUMB_BUDGET))
+      ])
+    : Promise.resolve(null);
   enqueue(async()=>{
     row.set(0,"Uploading…");
     try{
-      const th=await makeThumbs(file,kindOf(rec0));
+      const th=await thumbP;
+      const t0=Date.now();
       const content={
         "@type":"inputMessageDocument",
         document:{"@type":"inputFileBlob",name:file.name,data:file},
@@ -1139,7 +1187,7 @@ function queueUpload(file,path){
       const localId=d0&&d0.document&&d0.document.id;
       if(localId!=null)watchFile(localId,f=>{
         const up=(f.remote&&f.remote.uploaded_size)||0;
-        row.set(up/Math.max(1,file.size),`${fmt(up)} of ${fmt(file.size)}`);
+        row.set(up/Math.max(1,file.size),rateText(up,file.size,t0));
       });
       const final=await waitSend(provisional.id);
       if(localId!=null)unwatchFile(localId);
@@ -1151,11 +1199,21 @@ function queueUpload(file,path){
         const mt=doc.minithumbnail;
         if(mt&&typeof mt.data==="string"&&mt.data.length<THUMB_CAP)thumb=mt.data;
       }
-      idx.files.push({id:uid(),name:file.name,path,size:doc.document.size||file.size,
+      const newId=uid();
+      idx.files.push({id:newId,name:file.name,path,size:doc.document.size||file.size,
         mime:file.type||"application/octet-stream",remoteId:doc.document.remote.id,
         messageId:final.id,createdAt:Date.now(),thumb});
       touchIdx();
-      row.done(fmt(file.size));
+      // A big video is not worth decoding before the bytes start moving, so its
+      // thumbnail is made once the upload is done and stored locally.
+      if(wantThumb&&!preThumb){
+        withThumbSlot(()=>makeThumbs(file,kind)).then(t=>{
+          if(!t||!t.b64)return;
+          const f=idx.files.find(x=>x.id===newId);
+          if(f&&!f.thumb){f.thumb=t.b64;touchIdxLocal()}
+        }).catch(()=>{});
+      }
+      row.done(`${fmt(file.size)} · ${fmt(file.size/Math.max(0.5,(Date.now()-t0)/1000))}/s`);
     }catch(e){ row.fail(errText(e)); }
   });
 }
@@ -1174,26 +1232,38 @@ function queueDownload(rec){
         }catch(e){ if(e&&e.name==="AbortError"){row.el.remove();tHead();return} writable=null; }
       }
       const parts=[];
-      await pullFile(rec,(pct,bytes)=>row.set(pct,bytes?`${fmt(bytes)} of ${fmt(rec.size)}`:"Waiting for Telegram…"),
+      const t0=Date.now();
+      await pullFile(rec,(pct,bytes)=>row.set(pct,bytes?rateText(bytes,rec.size,t0):"Waiting for Telegram…"),
         async b=>{ if(writable)await writable.write(b); else parts.push(b); });
       if(writable){await writable.close();writable=null}
       else saveBlob(new Blob(parts,{type:rec.mime}),rec.name);
-      row.done(fmt(rec.size));
+      row.done(`${fmt(rec.size)} · ${fmt(rec.size/Math.max(0.5,(Date.now()-t0)/1000))}/s`);
     }catch(e){
       if(writable){try{await writable.abort()}catch(_){}}
       row.fail(errText(e));
     }
-  });
+  },"dn");
 }
 
 /* ================================ index =============================== */
 const live=()=>idx.files.filter(f=>!f.trashed);
 const trashed=()=>idx.files.filter(f=>f.trashed);
 const totalBytes=()=>live().reduce((a,f)=>a+(f.size||0),0);
+let cacheTimer=null;
 function touchIdx(){
-  idx.updatedAt=Date.now();idxDirty=true;idxCachePut(idx);render();
+  idx.updatedAt=Date.now();idxDirty=true;
+  scheduleRender();
+  clearTimeout(cacheTimer);
+  cacheTimer=setTimeout(()=>idxCachePut(idx),800);
   clearTimeout(idxTimer);
   idxTimer=setTimeout(()=>{saveIndex().catch(e=>toast("Couldn't save the index: "+errText(e)))},2500);
+}
+// A backfilled thumbnail is a local nicety — it must not trigger a whole index
+// upload to Telegram. It rides along with the next real change.
+function touchIdxLocal(){
+  scheduleRender();
+  clearTimeout(cacheTimer);
+  cacheTimer=setTimeout(()=>idxCachePut(idx),800);
 }
 async function saveIndex(){
   if(!savedChatId)return;
@@ -1449,6 +1519,27 @@ function toggleSel(id,on){
   render();
 }
 
+/* render() costs ~100 ms on a 400-file vault because it rebuilds every row,
+   thumbnails included. Calling it once per uploaded file starved the transfer
+   loop, so bulk work funnels through here and repaints a few times a second. */
+let renderQueued=false,lastRenderAt=0,viewDirty=false;
+function scheduleRender(){
+  // During a burst the file list is not what the user is watching — the
+  // transfer panel is. Rebuilding 400 rows per finished file starved the
+  // transfer loop, so defer the list until the queue settles. A slow
+  // heartbeat still refreshes counts on a single long transfer.
+  if(busyTransferring()){
+    viewDirty=true;
+    if(Date.now()-lastRenderAt>2000){lastRenderAt=Date.now();requestAnimationFrame(render)}
+    return;
+  }
+  if(renderQueued)return;
+  renderQueued=true;
+  const wait=Math.max(0,120-(Date.now()-lastRenderAt));
+  setTimeout(()=>requestAnimationFrame(()=>{
+    renderQueued=false;lastRenderAt=Date.now();viewDirty=false;render();
+  }),wait);
+}
 function render(){
   const liveFiles=live(), tr=trashed();
   $("cntAll").textContent=liveFiles.length||"";
@@ -1911,7 +2002,7 @@ window.addEventListener("drop",e=>{
   const dest=navView==="mine"?cwd:"/";
   [...(e.dataTransfer?e.dataTransfer.files:[])].forEach(f=>{if(f.size)queueUpload(f,dest)});
 });
-window.addEventListener("beforeunload",e=>{if(queue.length||running||idxDirty){e.preventDefault();e.returnValue=""}});
+window.addEventListener("beforeunload",e=>{if(busyTransferring()||idxDirty){e.preventDefault();e.returnValue=""}});
 
 if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"))
   window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
@@ -1922,7 +2013,7 @@ if(keys){$("apiId").value=keys.apiId||"";$("apiHash").value=keys.apiHash||""}
 boot();
 
 window.__vault={
-  state:()=>({idx,cwd,navView,query,mode:ui.mode,sort:ui.sort,sel:[...sel],authState,savedChatId,idxMessageId,queued:queue.length,running,
+  state:()=>({idx,cwd,navView,query,mode:ui.mode,sort:ui.sort,sel:[...sel],authState,savedChatId,idxMessageId,queued:lanes.up.q.length+lanes.dn.q.length,running:busyTransferring(),
     pv:{open:!$("pv").hidden,name:$("pvName").textContent,count:pvList.length,i:pvIdx}}),
   setCwd(p){go({cwd:p})},
   upload:queueUpload,download:queueDownload,openPreview,closePreview,pvStep,
@@ -1931,7 +2022,8 @@ window.__vault={
   setBigPreview(n){BIG_PREVIEW=n},
   setStallMs(n){STALL_MS=n},
   pull:pullFile,
-  drain:async()=>{for(let i=0;i<900&&(queue.length||running);i++)await sleep(50)}
+  lanes:()=>({up:lanes.up.running,dn:lanes.dn.running,qu:lanes.up.q.length}),
+  drain:async()=>{for(let i=0;i<900&&busyTransferring();i++)await sleep(50)}
 };
 })();
 
