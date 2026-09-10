@@ -335,7 +335,107 @@ nav{display:flex;flex-direction:column;gap:2px}
   .hdr{padding:0 8px;gap:4px}
   .searchwrap{height:46px;padding:0 12px}
 }
+/* ---- sticky selection bar + column header ---- */
+.stickytop{
+  position:sticky;top:calc(60px + env(safe-area-inset-top));z-index:32;
+  background:var(--surface);padding-top:6px;margin-top:-6px
+}
+.actionbar{box-shadow:0 2px 10px -4px rgba(60,64,67,.35)}
+.lhead{position:sticky;top:calc(116px + env(safe-area-inset-top));z-index:28;background:var(--surface)}
+
+/* ---- polish ---- */
+.row,.card,.navitem,.iconbtn,.abtn,.newbtn,.seg button{transition:background .13s ease,box-shadow .13s ease,border-color .13s ease}
+.card:hover{box-shadow:var(--sh-1);transform:translateY(-1px)}
+.card{transition:background .13s,box-shadow .13s,transform .13s,border-color .13s}
+.row .nm .ico,.row .nm .thumb{transition:transform .13s}
+.star{color:#f9ab00}
+.row .stario,.card .stario{width:16px;height:16px;flex:none;color:#f9ab00}
+
+/* ---- card hover actions ---- */
+.card .prev{position:relative}
+.card .ovl{
+  position:absolute;inset:auto 6px 6px auto;display:flex;gap:4px;opacity:0;transition:opacity .13s
+}
+.card:hover .ovl,.card.on .ovl{opacity:1}
+.card .ovl button{
+  width:32px;height:32px;border-radius:50%;border:0;display:grid;place-items:center;
+  background:rgba(20,22,24,.66);color:#fff;backdrop-filter:blur(3px)
+}
+.card .ovl button:hover{background:rgba(20,22,24,.86)}
+@media (pointer:coarse){.card .ovl{opacity:1}}
+
+/* ---- context menu ---- */
+.menu{
+  position:fixed;z-index:70;min-width:212px;padding:8px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--line-soft);box-shadow:var(--sh-2)
+}
+.menu button{
+  display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;
+  padding:10px 12px;border-radius:7px;font-size:14px;text-align:left;color:var(--text)
+}
+.menu button:hover{background:var(--hover)}
+.menu button.danger{color:var(--danger)}
+.menu .sep{height:1px;background:var(--line-soft);margin:6px 4px}
+.menu svg{width:19px;height:19px;flex:none;color:var(--muted)}
+.menu button.danger svg{color:var(--danger)}
+
+/* ---- details drawer ---- */
+.details{
+  position:fixed;right:0;top:calc(64px + env(safe-area-inset-top));bottom:0;width:328px;z-index:46;
+  background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--sh-2);
+  display:flex;flex-direction:column;transform:translateX(102%);transition:transform .18s ease
+}
+.details.open{transform:none}
+.details .dh{display:flex;align-items:center;gap:10px;padding:16px 12px 16px 20px;border-bottom:1px solid var(--line-soft)}
+.details .dh b{flex:1;font-size:16px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dbody{padding:18px 20px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.dprev{height:172px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;overflow:hidden}
+.dprev img{width:100%;height:100%;object-fit:cover}
+.dprev svg{width:46px;height:46px;opacity:.55}
+.drow{display:grid;grid-template-columns:96px 1fr;gap:12px;font-size:13px;align-items:baseline}
+.drow .k{color:var(--muted)}
+.drow .v{color:var(--text);word-break:break-word}
+.dacts{display:flex;flex-wrap:wrap;gap:8px}
+.dacts button{
+  background:var(--surface-2);border:1px solid var(--line-soft);border-radius:18px;
+  padding:8px 14px;font-size:13px;font-weight:500;color:var(--text)
+}
+.dacts button:hover{background:var(--hover)}
+.dacts button.danger{color:var(--danger);border-color:transparent}
+
+/* ---- drop overlay ---- */
+.dropzone{
+  position:fixed;inset:0;z-index:75;display:grid;place-items:center;
+  background:color-mix(in srgb, var(--accent) 16%, rgba(10,12,14,.62))
+}
+.dropzone .box{
+  background:var(--surface);border-radius:18px;padding:38px 46px;text-align:center;
+  border:2px dashed var(--accent);box-shadow:var(--sh-2)
+}
+.dropzone svg{width:52px;height:52px;color:var(--accent);margin:0 auto 14px}
+.dropzone b{display:block;font-size:19px;font-weight:500;margin-bottom:5px}
+.dropzone span{font-size:14px;color:var(--muted)}
+
+/* ---- trash banner ---- */
+.tbanner{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--surface-2);border-radius:10px;padding:11px 14px;margin-bottom:12px;font-size:13.5px;color:var(--text-2)
+}
+.tbanner .spacer{flex:1}
+.tbanner button{
+  background:none;border:1px solid var(--line);border-radius:16px;padding:7px 14px;
+  font-size:13px;font-weight:500;color:var(--danger)
+}
+.tbanner button:hover{background:var(--hover)}
+
+.dim{opacity:.55}
+.sortdir{transition:transform .15s}
+.sortdir.up{transform:rotate(180deg)}
+
 @media (max-width:640px){
+  .details{width:100%;top:calc(64px + env(safe-area-inset-top))}
+  .lhead{top:calc(104px + env(safe-area-inset-top))}
+  .stickytop{top:calc(56px + env(safe-area-inset-top))}
   .lhead,.row{grid-template-columns:24px minmax(0,1fr) auto;gap:10px}
   .lhead .mod,.row .mod,.rowacts,.actcol{display:none}
   .grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
@@ -445,6 +545,7 @@ nav{display:flex;flex-direction:column;gap:2px}
       <button class="iconbtn" id="clearSearch" hidden aria-label="Clear search"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
     </div>
     <div class="hdr-right">
+      <button class="iconbtn" id="themeBtn" aria-label="Theme" title="Theme"></button>
       <button class="iconbtn" id="logoutBtn" aria-label="Sign out" title="Sign out"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg></button>
       <button class="avatar" id="avatar" aria-label="Account">?</button>
     </div>
@@ -465,6 +566,14 @@ nav{display:flex;flex-direction:column;gap:2px}
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
           All files <span class="cnt" id="cntAll"></span>
         </button>
+        <button class="navitem" id="navStar" data-view="star">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.27 6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          Starred <span class="cnt" id="cntStar"></span>
+        </button>
+        <button class="navitem" id="navTrash" data-view="trash">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          Trash <span class="cnt" id="cntTrash"></span>
+        </button>
         <button class="navitem" id="navRecent" data-view="recent">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l4 4 4-4H6a7 7 0 1 1 7 7 6.9 6.9 0 0 1-4.9-2L6.7 18.4A9 9 0 1 0 13 3zm-1 5v5l4.3 2.5.7-1.2-3.5-2.1V8H12z"/></svg>
           Recent
@@ -478,11 +587,16 @@ nav{display:flex;flex-direction:column;gap:2px}
     </aside>
 
     <section class="content">
+      <div class="stickytop" id="stickytop">
       <div class="actionbar" id="actionbar" hidden>
         <button class="abtn" id="selNone" aria-label="Clear selection"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
         <span class="cnt" id="selCnt">0 selected</span>
         <button class="abtn" id="dlSel" aria-label="Download" title="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></button>
         <button class="abtn" id="delSel" aria-label="Delete" title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        <span class="spacer"></span>
+        <button class="abtn" id="starSel" aria-label="Star" title="Star"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.27 6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+        <button class="abtn" id="moveSel" aria-label="Move to" title="Move to"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-6 10v-3h-3v-2h3V8l4 4-4 4z"/></svg></button>
+        <button class="abtn" id="infoSel" aria-label="Details" title="Details"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg></button>
         <span class="spacer"></span>
         <button class="abtn" id="selAll" aria-label="Select all" title="Select all"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h2V3a2 2 0 0 0-2 2zm0 8h2v-2H3v2zm4 8h2v-2H7v2zM3 9h2V7H3v2zm10-6h-2v2h2V3zM19 3v2h2a2 2 0 0 0-2-2zM5 21v-2H3a2 2 0 0 0 2 2zm-2-4h2v-2H3v2zM9 3H7v2h2V3zm2 18h2v-2h-2v2zm8-8h2v-2h-2v2zm0 8a2 2 0 0 0 2-2h-2v2zm0-12h2V7h-2v2zm0 8h2v-2h-2v2zm-4 4h2v-2h-2v2zm0-16h2V3h-2v2zM7 17h10V7H7v10z"/></svg></button>
       </div>
@@ -495,6 +609,7 @@ nav{display:flex;flex-direction:column;gap:2px}
             <option value="name">Name</option>
             <option value="big">Size</option>
           </select>
+          <button class="iconbtn" id="sortDir" aria-label="Sort direction" title="Sort direction"><svg class="sortdir" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
           <div class="seg">
             <button id="vList" class="on" aria-label="List view" title="List view"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></button>
             <button id="vGrid" aria-label="Grid view" title="Grid view"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm7 0h5v-6h-5v6zm7 0h5v-6h-5v6zm-7-7h5V5h-5v6zm7-6v6h5V5h-5z"/></svg></button>
@@ -502,6 +617,12 @@ nav{display:flex;flex-direction:column;gap:2px}
         </div>
       </div>
 
+      </div>
+      <div class="tbanner" id="tbanner" hidden>
+        <span id="tbannerText">Items in Trash are still stored in Saved Messages.</span>
+        <span class="spacer"></span>
+        <button id="emptyTrash">Empty trash</button>
+      </div>
       <div class="lhead" id="lhead">
         <input class="cb" type="checkbox" id="cbAll" aria-label="Select all files">
         <span>Name</span><span class="mod">Last modified</span><span class="r">Size</span><span class="actcol"></span>
@@ -511,6 +632,22 @@ nav{display:flex;flex-direction:column;gap:2px}
   </div>
 
   <button class="scrim" id="scrim" hidden aria-label="Close menu"></button>
+
+  <aside class="details" id="details">
+    <div class="dh">
+      <b id="dTitle">Details</b>
+      <button class="iconbtn" id="dClose" aria-label="Close details"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    </div>
+    <div class="dbody" id="dBody"></div>
+  </aside>
+
+  <div class="dropzone" id="dropzone" hidden>
+    <div class="box">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+      <b>Drop to upload</b>
+      <span id="dropWhere">to My Vault</span>
+    </div>
+  </div>
 
   <div class="tpanel" id="tpanel" hidden>
     <div class="th">
@@ -587,7 +724,17 @@ const P={
   trash:"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z",
   eye:"M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
   up:"M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z",
-  newfolder:"M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z"
+  newfolder:"M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z",
+  more:"M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z",
+  restore:"M13 3a9 9 0 0 0-9 9H1l4 4 4-4H6a7 7 0 1 1 7 7 6.9 6.9 0 0 1-4.9-2L6.7 18.4A9 9 0 1 0 13 3z",
+  rename:"M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z",
+  move:"M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-6 10v-3h-3v-2h3V8l4 4-4 4z",
+  star:"m12 17.27 6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
+  starOff:"M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28z",
+  info:"M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z",
+  theme:"M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z",
+  sun:"M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3h0V2zm0 17v3h0v-3zM4.2 5.6 6.3 7.7 4.9 9.1 2.8 7zM17.7 16.3l2.1 2.1-1.4 1.4-2.1-2.1zM2 11h3v2H2zm17 0h3v2h-3zM4.9 14.9l1.4 1.4-2.1 2.1L2.8 17zM19.8 5.6 17.7 7.7l1.4 1.4L21.2 7z",
+  auto:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18V4a8 8 0 0 1 0 16z"
 };
 const KCOL={folder:"--t-folder",image:"--t-image",video:"--t-video",audio:"--t-audio",pdf:"--t-pdf",zip:"--t-zip",doc:"--t-doc",file:"--t-file"};
 const ico=(k,cls)=>`<svg class="${cls||"ico"}" viewBox="0 0 24 24" fill="currentColor" style="color:var(${KCOL[k]||"--t-file"})" aria-hidden="true"><path d="${P[k]||P.file}"/></svg>`;
@@ -608,7 +755,7 @@ const CAN_PREVIEW={image:1,video:1,audio:1,pdf:1};
 
 /* -------------------------------- state ------------------------------- */
 let keys=lsGet(KEYS_LS);
-const ui=Object.assign({mode:"list",sort:"new"},lsGet(UI_LS)||{});
+const ui=Object.assign({mode:"list",sort:"new",rev:false,theme:"system"},lsGet(UI_LS)||{});
 let client=null,me=null,savedChatId=null;
 let idx={v:2,updatedAt:0,folders:[],files:[]};
 let idxMessageId=null,idxDirty=false,idxTimer=null;
@@ -706,6 +853,7 @@ function normalize(d){
       id:f.id,name:f.name,path:f.path&&f.path.startsWith("/")?f.path:"/",
       size:Number(f.size)||0,mime:f.mime||"application/octet-stream",
       remoteId:f.remoteId||null,messageId:f.messageId||null,createdAt:f.createdAt||Date.now(),
+      star:!!f.star,trashed:f.trashed||0,
       thumb:typeof f.thumb==="string"&&f.thumb.length<THUMB_CAP?f.thumb:null}))};
 }
 
@@ -939,7 +1087,9 @@ function queueDownload(rec){
 }
 
 /* ================================ index =============================== */
-const totalBytes=()=>idx.files.reduce((a,f)=>a+(f.size||0),0);
+const live=()=>idx.files.filter(f=>!f.trashed);
+const trashed=()=>idx.files.filter(f=>f.trashed);
+const totalBytes=()=>live().reduce((a,f)=>a+(f.size||0),0);
 function touchIdx(){
   idx.updatedAt=Date.now();idxDirty=true;lsSet(IDX_LS,idx);render();
   clearTimeout(idxTimer);
@@ -991,11 +1141,17 @@ const join=(a,b)=>norm(a==="/"?"/"+b:a+"/"+b);
 function childFolders(p){
   const pre=p==="/"?"/":p+"/";const out=new Set();
   const add=(full)=>{if(!full.startsWith(pre)||full===p)return;const seg=full.slice(pre.length).split("/")[0];if(seg)out.add(pre+seg)};
-  idx.folders.forEach(add);idx.files.forEach(f=>add(f.path));
+  idx.folders.forEach(add);live().forEach(f=>add(f.path));
   return [...out].sort((a,b)=>a.localeCompare(b));
 }
-const filesIn=(p)=>idx.files.filter(f=>f.path===p);
-function subtreeFiles(p){const pre=p==="/"?"/":p+"/";return idx.files.filter(f=>f.path===p||f.path.startsWith(pre))}
+const filesIn=(p)=>live().filter(f=>f.path===p);
+function subtreeFiles(p){const pre=p==="/"?"/":p+"/";return live().filter(f=>f.path===p||f.path.startsWith(pre))}
+function allFolders(){
+  const s=new Set(["/"]);
+  idx.folders.forEach(f=>s.add(f));
+  live().forEach(f=>{ if(f.path!=="/")s.add(f.path); });
+  return [...s].sort((a,b)=>a.localeCompare(b));
+}
 function createFolder(){
   const name=prompt("New folder name");
   if(!name)return;
@@ -1012,6 +1168,19 @@ async function deleteFolder(p){
   const pre=p+"/";
   idx.folders=idx.folders.filter(f=>f!==p&&!f.startsWith(pre));
   touchIdx();
+}
+function trashRecords(recs){
+  if(!recs.length)return;
+  const t=Date.now();
+  recs.forEach(r=>{const f=idx.files.find(x=>x.id===r.id);if(f)f.trashed=t});
+  sel.clear();touchIdx();
+  toast(`${recs.length} item${recs.length===1?"":"s"} moved to Trash.`);
+}
+function restoreRecords(recs){
+  if(!recs.length)return;
+  recs.forEach(r=>{const f=idx.files.find(x=>x.id===r.id);if(f)f.trashed=0});
+  sel.clear();touchIdx();
+  toast(`Restored ${recs.length} item${recs.length===1?"":"s"}.`);
 }
 async function deleteRecords(recs,quiet){
   if(!recs.length)return;
@@ -1144,18 +1313,20 @@ document.addEventListener("keydown",e=>{
 
 /* ================================ rows ================================ */
 function sortFiles(list){
-  const s=ui.sort;
-  return list.slice().sort((a,b)=>
+  const s=ui.sort, flip=ui.rev?-1:1;
+  return list.slice().sort((a,b)=>flip*(
     s==="name"?a.name.localeCompare(b.name,undefined,{numeric:true}):
-    s==="big"?b.size-a.size:b.createdAt-a.createdAt);
+    s==="big"?b.size-a.size:b.createdAt-a.createdAt));
 }
 function currentRows(){
+  if(navView==="trash")return sortFiles(trashed()).map(rec=>({kind:"file",rec}));
   if(query){
     const q=query.toLowerCase();
-    return sortFiles(idx.files.filter(f=>f.name.toLowerCase().includes(q))).map(rec=>({kind:"file",rec}));
+    return sortFiles(live().filter(f=>f.name.toLowerCase().includes(q))).map(rec=>({kind:"file",rec}));
   }
-  if(navView==="all")return sortFiles(idx.files).map(rec=>({kind:"file",rec}));
-  if(navView==="recent")return idx.files.slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,50).map(rec=>({kind:"file",rec}));
+  if(navView==="all")return sortFiles(live()).map(rec=>({kind:"file",rec}));
+  if(navView==="star")return sortFiles(live().filter(f=>f.star)).map(rec=>({kind:"file",rec}));
+  if(navView==="recent")return live().slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,50).map(rec=>({kind:"file",rec}));
   return [
     ...childFolders(cwd).map(p=>({kind:"folder",path:p})),
     ...sortFiles(filesIn(cwd)).map(rec=>({kind:"file",rec}))
@@ -1172,23 +1343,23 @@ function toggleSel(id,on){
 }
 
 function render(){
-  // sidebar + storage
-  $("cntAll").textContent=idx.files.length||"";
+  const liveFiles=live(), tr=trashed();
+  $("cntAll").textContent=liveFiles.length||"";
+  $("cntStar").textContent=liveFiles.filter(f=>f.star).length||"";
+  $("cntTrash").textContent=tr.length||"";
   $("usedVal").textContent=fmt(totalBytes());
-  const tot=totalBytes()||1;
-  const byKind={};
-  idx.files.forEach(f=>{const k=kindOf(f);byKind[k]=(byKind[k]||0)+f.size});
-  const meter=document.querySelector(".meter");
-  meter.innerHTML=Object.entries(byKind).sort((a,b)=>b[1]-a[1])
+  const tot=totalBytes()||1, byKind={};
+  liveFiles.forEach(f=>{const k=kindOf(f);byKind[k]=(byKind[k]||0)+f.size});
+  document.querySelector(".meter").innerHTML=Object.entries(byKind).sort((a,b)=>b[1]-a[1])
     .map(([k,v])=>`<i style="width:${(v/tot*100).toFixed(2)}%;background:var(${KCOL[k]||"--t-file"})"></i>`).join("");
 
-  ["navMine","navAll","navRecent"].forEach(id=>$(id).classList.toggle("on",$(id).dataset.view===navView&&!query));
+  ["navMine","navAll","navStar","navTrash","navRecent"].forEach(id=>
+    $(id).classList.toggle("on",$(id).dataset.view===navView&&!query));
 
-  // breadcrumb / title
+  const TITLES={all:"All files",recent:"Recent",star:"Starred",trash:"Trash"};
   const cr=$("crumbs");
   if(query){ cr.innerHTML=`<span class="here">Search results</span>`; }
-  else if(navView==="all"){ cr.innerHTML=`<span class="here">All files</span>`; }
-  else if(navView==="recent"){ cr.innerHTML=`<span class="here">Recent</span>`; }
+  else if(TITLES[navView]){ cr.innerHTML=`<span class="here">${TITLES[navView]}</span>`; }
   else {
     const parts=cwd==="/"?[]:cwd.split("/").filter(Boolean);
     let acc="";const out=[parts.length?`<button data-p="/">My Vault</button>`:`<span class="here">My Vault</span>`];
@@ -1198,7 +1369,7 @@ function render(){
       out.push(i===parts.length-1?`<span class="here">${esc(seg)}</span>`:`<button data-p="${esc(acc)}">${esc(seg)}</button>`);
     });
     cr.innerHTML=out.join("");
-    cr.querySelectorAll("button").forEach(b=>b.onclick=()=>{cwd=b.dataset.p;sel.clear();render()});
+    cr.querySelectorAll("button").forEach(b=>b.onclick=()=>go({cwd:b.dataset.p}));
   }
 
   const rows=currentRows();
@@ -1209,32 +1380,57 @@ function render(){
   cbAll.checked=fileRows.length>0&&fileRows.every(r=>sel.has(r.rec.id));
   cbAll.indeterminate=!cbAll.checked&&fileRows.some(r=>sel.has(r.rec.id));
 
-  // selection bar
-  const n=sel.size;
+  const n=sel.size, inTrash=navView==="trash";
   $("actionbar").hidden=n===0;
   $("crow").hidden=n>0;
+  $("starSel").hidden=inTrash; $("moveSel").hidden=inTrash;
+  $("infoSel").hidden=n!==1;
+  $("dlSel").hidden=inTrash;
+  $("delSel").setAttribute("title",inTrash?"Delete forever":"Move to trash");
   if(n){
     const bytes=idx.files.filter(f=>sel.has(f.id)).reduce((a,f)=>a+f.size,0);
     $("selCnt").textContent=`${n} selected · ${fmt(bytes)}`;
   }
 
+  $("tbanner").hidden=!inTrash||tr.length===0;
+  if(inTrash&&tr.length)
+    $("tbannerText").textContent=`${tr.length} item${tr.length===1?"":"s"} · ${fmt(tr.reduce((a,f)=>a+f.size,0))} still stored in Saved Messages until you delete them for good.`;
+
   $("lhead").hidden=ui.mode!=="list"||rows.length===0;
   $("vList").classList.toggle("on",ui.mode==="list");
   $("vGrid").classList.toggle("on",ui.mode==="grid");
+  $("sortDir").querySelector(".sortdir").classList.toggle("up",!!ui.rev);
+  $("sortDir").title=ui.rev?"Ascending":"Descending";
 
   const host=$("listHost");
   if(!rows.length){
-    host.innerHTML=`<div class="empty">${plainIco(query?"file":"folder","")}
-      <p class="t">${query?"No files match your search":navView==="mine"&&cwd==="/"?"Your vault is empty":"Nothing here"}</p>
-      <p>${query?"Try a different name.":"Drop files anywhere on this page to upload."}</p></div>`;
+    const msg = query ? ["No files match your search","Try a different name."]
+      : inTrash ? ["Trash is empty","Deleted files rest here before they are removed for good."]
+      : navView==="star" ? ["Nothing starred yet","Star a file to find it quickly later."]
+      : navView==="recent" ? ["Nothing recent","Files you add will show up here."]
+      : cwd==="/" ? ["Your vault is empty","Drag files anywhere on this page to upload."]
+      : ["This folder is empty","Drag files here, or use New."];
+    host.innerHTML=`<div class="empty">${plainIco(inTrash?"trash":query?"file":"folder","")}
+      <p class="t">${esc(msg[0])}</p><p>${esc(msg[1])}</p></div>`;
     return;
   }
-
   host.innerHTML = ui.mode==="list"
     ? `<div class="rows">${rows.map(rowHtml).join("")}</div>`
     : `<div class="grid">${rows.map(cardHtml).join("")}</div>`;
   wireRows(host,rows);
 }
+
+/* one place that changes what is on screen, so the selection can never
+   outlive the view it was made in */
+function go(o){
+  o=o||{};
+  if("view" in o)navView=o.view;
+  if("cwd" in o){cwd=o.cwd;navView="mine"}
+  if("query" in o)query=o.query;
+  sel.clear();closeDetails();render();
+}
+
+const starIco=`<svg class="stario" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.27 6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
 
 function rowHtml(r){
   if(r.kind==="folder"){
@@ -1244,20 +1440,22 @@ function rowHtml(r){
       <div class="nm">${ico("folder")}<span>${esc(r.path.split("/").pop())}</span></div>
       <div class="cell mod">${inside.length} item${inside.length===1?"":"s"}</div>
       <div class="cell r">${fmt(inside.reduce((a,f)=>a+f.size,0))}</div>
-      <div class="rowacts"><button class="iconbtn" data-act="delfolder" aria-label="Delete folder">${plainIco("trash","")}</button></div>
+      <div class="rowacts"><button class="iconbtn" data-act="delfolder" aria-label="Delete folder">${plainIco("trash")}</button></div>
     </div>`;
   }
-  const f=r.rec,k=kindOf(f),on=sel.has(f.id);
+  const f=r.rec,k=kindOf(f),on=sel.has(f.id),inTrash=navView==="trash";
   const lead=f.thumb?`<img class="thumb" src="data:image/jpeg;base64,${esc(f.thumb)}" alt="">`:ico(k);
   return `<div class="row${on?" on":""}" data-id="${esc(f.id)}">
     <input class="cb" type="checkbox" ${on?"checked":""} aria-label="Select ${esc(f.name)}">
-    <div class="nm" data-open="1">${lead}<span>${esc(f.name)}</span></div>
-    <div class="cell mod">${when(f.createdAt)}</div>
+    <div class="nm" data-open="1">${lead}<span>${esc(f.name)}</span>${f.star?starIco:""}</div>
+    <div class="cell mod">${inTrash?"in trash "+when(f.trashed):when(f.createdAt)}</div>
     <div class="cell r">${fmt(f.size)}</div>
     <div class="rowacts">
-      ${CAN_PREVIEW[k]?`<button class="iconbtn" data-act="view" aria-label="Preview">${plainIco("eye","")}</button>`:""}
-      <button class="iconbtn" data-act="get" aria-label="Download">${plainIco("dl","")}</button>
-      <button class="iconbtn" data-act="del" aria-label="Delete">${plainIco("trash","")}</button>
+      ${inTrash
+        ? `<button class="iconbtn" data-act="restore" aria-label="Restore">${plainIco("restore")}</button>`
+        : `${CAN_PREVIEW[k]?`<button class="iconbtn" data-act="view" aria-label="Preview">${plainIco("eye")}</button>`:""}
+           <button class="iconbtn" data-act="get" aria-label="Download">${plainIco("dl")}</button>`}
+      <button class="iconbtn" data-act="more" aria-label="More actions">${plainIco("more")}</button>
     </div>
   </div>`;
 }
@@ -1265,47 +1463,60 @@ function cardHtml(r){
   if(r.kind==="folder"){
     const inside=subtreeFiles(r.path);
     return `<div class="card" data-folder="${esc(r.path)}">
-      <div class="top"><span class="cb" style="width:17px"></span>${ico("folder","ico")}<span class="t">${esc(r.path.split("/").pop())}</span></div>
+      <div class="top"><span style="width:17px"></span>${ico("folder","ico")}<span class="t">${esc(r.path.split("/").pop())}</span></div>
       <div class="prev">${plainIco("folder","big")}</div>
       <div class="meta">${inside.length} item${inside.length===1?"":"s"} · ${fmt(inside.reduce((a,f)=>a+f.size,0))}</div>
     </div>`;
   }
-  const f=r.rec,k=kindOf(f),on=sel.has(f.id);
+  const f=r.rec,k=kindOf(f),on=sel.has(f.id),inTrash=navView==="trash";
   const body=f.thumb
-    ? `<img src="data:image/jpeg;base64,${esc(f.thumb)}" alt="">${k==="video"?`<span class="play">${plainIco("play","")}</span>`:""}`
+    ? `<img src="data:image/jpeg;base64,${esc(f.thumb)}" alt="">${k==="video"?`<span class="play">${plainIco("play")}</span>`:""}`
     : plainIco(k,"big");
+  const ovl=inTrash
+    ? `<button data-act="restore" aria-label="Restore">${plainIco("restore")}</button>`
+    : `${CAN_PREVIEW[k]?`<button data-act="view" aria-label="Preview">${plainIco("eye")}</button>`:""}
+       <button data-act="more" aria-label="More actions">${plainIco("more")}</button>`;
   return `<div class="card${on?" on":""}" data-id="${esc(f.id)}">
     <div class="top">
       <input class="cb" type="checkbox" ${on?"checked":""} aria-label="Select ${esc(f.name)}">
-      ${ico(k,"ico")}<span class="t" data-open="1">${esc(f.name)}</span>
+      ${ico(k,"ico")}<span class="t" data-open="1">${esc(f.name)}</span>${f.star?starIco:""}
     </div>
-    <div class="prev" data-open="1">${body}</div>
-    <div class="meta">${fmt(f.size)} · ${when(f.createdAt)}</div>
+    <div class="prev" data-open="1">${body}<span class="ovl">${ovl}</span></div>
+    <div class="meta">${fmt(f.size)} · ${inTrash?"in trash "+when(f.trashed):when(f.createdAt)}</div>
   </div>`;
 }
 function wireRows(host,rows){
   const byId=new Map(rows.filter(r=>r.kind==="file").map(r=>[r.rec.id,r]));
   host.querySelectorAll("[data-folder]").forEach(el=>{
-    const p=el.dataset.folder;
-    el.querySelectorAll('[data-act="delfolder"]').forEach(b=>b.onclick=(e)=>{e.stopPropagation();deleteFolder(p)});
-    el.addEventListener("click",e=>{ if(e.target.closest("[data-act]"))return; cwd=p;sel.clear();render(); });
+    const path=el.dataset.folder;
+    el.querySelectorAll('[data-act="delfolder"]').forEach(b=>b.onclick=(e)=>{e.stopPropagation();deleteFolder(path)});
+    el.addEventListener("click",e=>{ if(e.target.closest("[data-act]"))return; go({cwd:path}); });
+    el.addEventListener("contextmenu",e=>{e.preventDefault();folderMenu(e.clientX,e.clientY,path)});
   });
   host.querySelectorAll("[data-id]").forEach(el=>{
-    const r=byId.get(el.dataset.id);if(!r)return;
+    const r=byId.get(el.dataset.id); if(!r)return;
     const cb=el.querySelector(".cb");
-    if(cb)cb.onclick=(e)=>{e.stopPropagation();toggleSel(r.rec.id,cb.checked)};
+    if(cb)cb.onclick=(e)=>{e.stopPropagation();cb.checked?sel.add(r.rec.id):sel.delete(r.rec.id);render()};
     el.querySelectorAll("[data-open]").forEach(o=>o.onclick=(e)=>{e.stopPropagation();openRow(r)});
-    el.querySelectorAll("[data-act]").forEach(b=>b.onclick=async(e)=>{
+    el.querySelectorAll("[data-act]").forEach(b=>b.onclick=(e)=>{
       e.stopPropagation();
       const a=b.dataset.act;
       if(a==="view")openPreview(r.rec);
       if(a==="get")queueDownload(r.rec);
-      if(a==="del"){ if(confirm(`Delete "${r.rec.name}"?`))await deleteRecords([r.rec]); }
+      if(a==="restore")restoreRecords([r.rec]);
+      if(a==="more"){const bb=b.getBoundingClientRect();fileMenu(bb.left,bb.bottom+6,r.rec)}
     });
+    el.addEventListener("contextmenu",e=>{
+      e.preventDefault();
+      if(!sel.has(r.rec.id)){sel.clear();sel.add(r.rec.id);render()}
+      fileMenu(e.clientX,e.clientY,r.rec);
+    });
+    // a plain tap adds to the selection when one already exists, rather than
+    // wiping it; with nothing selected it selects just this row
     el.addEventListener("click",e=>{
       if(e.target.closest("[data-act]")||e.target.closest("[data-open]")||e.target.classList.contains("cb"))return;
-      const only=!(sel.size===1&&sel.has(r.rec.id));
-      sel.clear(); if(only)sel.add(r.rec.id);
+      if(sel.size){ sel.has(r.rec.id)?sel.delete(r.rec.id):sel.add(r.rec.id); }
+      else sel.add(r.rec.id);
       render();
     });
   });
@@ -1314,9 +1525,12 @@ function wireRows(host,rows){
 /* ================================ chrome ============================== */
 function selectAllHere(){currentRows().filter(r=>r.kind==="file").forEach(r=>sel.add(r.rec.id));render()}
 $("selAll").onclick=selectAllHere;
+// Clicking an indeterminate checkbox makes the browser set checked=true, so
+// reading .checked here chose the wrong branch and selected everything.
+// Any existing selection means the click is a "clear".
 $("cbAll").onclick=(e)=>{
   e.stopPropagation();
-  if($("cbAll").checked)selectAllHere(); else {sel.clear();render()}
+  if(sel.size){sel.clear();render()} else selectAllHere();
 };
 const TEXTY=["text","password","search","email","url","tel","number"];
 function isTyping(t){
@@ -1325,33 +1539,43 @@ function isTyping(t){
   return t.tagName==="INPUT"&&TEXTY.includes((t.type||"text").toLowerCase());
 }
 document.addEventListener("keydown",e=>{
-  if(!$("pv").hidden||$("scrVault").hidden)return;
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="a"&&!isTyping(e.target)){
-    e.preventDefault();selectAllHere();
+  if(!$("pv").hidden||$("scrVault").hidden||isTyping(e.target))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="a"){e.preventDefault();selectAllHere();return}
+  if(e.key==="Escape"&&sel.size){sel.clear();closeDetails();render();return}
+  if((e.key==="Delete"||e.key==="Backspace")&&sel.size){
+    e.preventDefault();
+    const recs=idx.files.filter(f=>sel.has(f.id));
+    if(navView==="trash")confirmForever(recs); else trashRecords(recs);
   }
 });
-$("selNone").onclick=()=>{sel.clear();render()};
+const picked=()=>idx.files.filter(f=>sel.has(f.id));
+$("selNone").onclick=()=>{sel.clear();closeDetails();render()};
 $("dlSel").onclick=()=>{
-  const recs=idx.files.filter(f=>sel.has(f.id));if(!recs.length)return;
+  const recs=picked();if(!recs.length)return;
   recs.forEach(queueDownload);sel.clear();render();
 };
 $("delSel").onclick=async()=>{
-  const recs=idx.files.filter(f=>sel.has(f.id));if(!recs.length)return;
-  if(!confirm(`Delete ${recs.length} item${recs.length===1?"":"s"}?`))return;
-  await deleteRecords(recs);
+  const recs=picked();if(!recs.length)return;
+  if(navView==="trash")await confirmForever(recs); else trashRecords(recs);
 };
-["navMine","navAll","navRecent"].forEach(id=>$(id).onclick=()=>{
-  navView=$(id).dataset.view;query="";$("search").value="";$("clearSearch").hidden=true;
-  if(navView==="mine")cwd="/";
-  sel.clear();drawer(false);render();
+$("starSel").onclick=()=>toggleStar(picked());
+$("moveSel").onclick=()=>moveDialog(picked());
+$("infoSel").onclick=()=>{const r=picked();if(r.length===1)showDetails(r[0])};
+["navMine","navAll","navStar","navTrash","navRecent"].forEach(id=>$(id).onclick=()=>{
+  $("search").value="";$("clearSearch").hidden=true;
+  const v=$(id).dataset.view;
+  drawer(false);
+  go(v==="mine"?{view:"mine",cwd:"/",query:""}:{view:v,query:""});
 });
 $("vList").onclick=()=>{ui.mode="list";lsSet(UI_LS,ui);render()};
 $("vGrid").onclick=()=>{ui.mode="grid";lsSet(UI_LS,ui);render()};
 $("sort").onchange=()=>{ui.sort=$("sort").value;lsSet(UI_LS,ui);render()};
+$("sortDir").onclick=()=>{ui.rev=!ui.rev;lsSet(UI_LS,ui);render()};
 $("search").addEventListener("input",()=>{
-  query=$("search").value.trim();$("clearSearch").hidden=!query;sel.clear();render();
+  $("clearSearch").hidden=!$("search").value.trim();
+  go({query:$("search").value.trim()});
 });
-$("clearSearch").onclick=()=>{$("search").value="";query="";$("clearSearch").hidden=true;render()};
+$("clearSearch").onclick=()=>{$("search").value="";$("clearSearch").hidden=true;go({query:""})};
 function drawer(open){
   $("side").classList.toggle("open",open);
   $("scrim").hidden=!open;
@@ -1374,25 +1598,163 @@ $("pvBody").addEventListener("touchend",e=>{
 
 let menuEl=null;
 function closeMenu(){if(menuEl){menuEl.remove();menuEl=null}}
+function openMenu(x,y,items){
+  closeMenu();
+  menuEl=document.createElement("div");
+  menuEl.className="menu";
+  menuEl.innerHTML=items.map((it,i)=>it.sep?`<div class="sep"></div>`
+    :`<button data-i="${i}" class="${it.danger?"danger":""}">${plainIco(it.icon)}${esc(it.label)}</button>`).join("");
+  menuEl.style.visibility="hidden";
+  document.body.appendChild(menuEl);
+  const r=menuEl.getBoundingClientRect();
+  menuEl.style.left=Math.max(8,Math.min(x,window.innerWidth-r.width-8))+"px";
+  menuEl.style.top=Math.max(8,Math.min(y,window.innerHeight-r.height-8))+"px";
+  menuEl.style.visibility="visible";
+  menuEl.querySelectorAll("button").forEach(b=>b.onclick=(e)=>{
+    e.stopPropagation();
+    const it=items[+b.dataset.i];closeMenu();it.act&&it.act();
+  });
+  menuEl.addEventListener("click",e=>e.stopPropagation());
+}
 $("newBtn").onclick=(e)=>{
   if(menuEl){closeMenu();return}
   e.stopPropagation();
   const b=e.currentTarget.getBoundingClientRect();
-  menuEl=document.createElement("div");
-  menuEl.style.cssText=`position:fixed;left:${b.left}px;top:${b.bottom+6}px;z-index:60;background:var(--surface);
-    border:1px solid var(--line-soft);border-radius:8px;box-shadow:var(--sh-2);padding:6px;min-width:200px`;
-  menuEl.innerHTML=[["up","File upload","upload"],["newfolder","New folder","folder"]].map(([i,t,a])=>
-    `<button data-a="${a}" style="display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;
-      padding:10px 12px;border-radius:6px;font-size:14px;text-align:left">${plainIco(i,"")}${t}</button>`).join("");
-  menuEl.querySelectorAll("button").forEach(x=>{
-    x.onmouseenter=()=>x.style.background="var(--hover)";
-    x.onmouseleave=()=>x.style.background="none";
-    x.onclick=()=>{const a=x.dataset.a;closeMenu();a==="upload"?$("fileInput").click():createFolder()};
-  });
-  document.body.appendChild(menuEl);
+  openMenu(b.left,b.bottom+6,[
+    {icon:"up",label:"File upload",act:()=>$("fileInput").click()},
+    {icon:"newfolder",label:"New folder",act:createFolder}
+  ]);
 };
+function fileMenu(x,y,rec){
+  const inTrash=!!rec.trashed;
+  const many=sel.size>1&&sel.has(rec.id);
+  const picked=()=>many?idx.files.filter(f=>sel.has(f.id)):[rec];
+  openMenu(x,y, inTrash ? [
+    {icon:"restore",label:many?`Restore ${sel.size} items`:"Restore",act:()=>restoreRecords(picked())},
+    {sep:true},
+    {icon:"trash",label:many?`Delete ${sel.size} forever`:"Delete forever",danger:true,act:()=>confirmForever(picked())}
+  ] : [
+    ...(CAN_PREVIEW[kindOf(rec)]&&!many?[{icon:"eye",label:"Preview",act:()=>openPreview(rec)}]:[]),
+    {icon:"dl",label:many?`Download ${sel.size} files`:"Download",act:()=>picked().forEach(queueDownload)},
+    {sep:true},
+    ...(many?[]:[{icon:"rename",label:"Rename",act:()=>renameRecord(rec)}]),
+    {icon:"move",label:"Move to…",act:()=>moveDialog(picked())},
+    {icon:rec.star?"starOff":"star",label:rec.star?"Remove star":"Add star",act:()=>toggleStar(picked())},
+    ...(many?[]:[{icon:"info",label:"Details",act:()=>showDetails(rec)}]),
+    {sep:true},
+    {icon:"trash",label:many?`Move ${sel.size} to trash`:"Move to trash",danger:true,act:()=>trashRecords(picked())}
+  ]);
+}
+function folderMenu(x,y,path){
+  openMenu(x,y,[
+    {icon:"folder",label:"Open",act:()=>go({cwd:path})},
+    {icon:"rename",label:"Rename",act:()=>renameFolder(path)},
+    {sep:true},
+    {icon:"trash",label:"Delete folder",danger:true,act:()=>deleteFolder(path)}
+  ]);
+}
 document.addEventListener("click",()=>closeMenu());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+
+/* ---------------------------- file operations ------------------------- */
+function renameRecord(rec){
+  const name=prompt("Rename file",rec.name);
+  if(!name||name.trim()===rec.name)return;
+  const f=idx.files.find(x=>x.id===rec.id);
+  if(f){f.name=name.trim();touchIdx();toast("Renamed. The copy in Saved Messages keeps its original filename.")}
+}
+function renameFolder(path){
+  const old=path.split("/").pop();
+  const name=prompt("Rename folder",old);
+  if(!name)return;
+  const clean=name.replace(/[\/\\]+/g,"-").trim();
+  if(!clean||clean===old)return;
+  const parent=path.slice(0,path.lastIndexOf("/"))||"/";
+  const next=join(parent,clean);
+  if(allFolders().includes(next))return toast("A folder with that name already exists here.");
+  const pre=path+"/";
+  idx.folders=idx.folders.map(f=>f===path?next:f.startsWith(pre)?next+f.slice(path.length):f);
+  idx.files.forEach(f=>{ if(f.path===path)f.path=next; else if(f.path.startsWith(pre))f.path=next+f.path.slice(path.length); });
+  if(cwd===path||cwd.startsWith(pre))cwd=next+cwd.slice(path.length);
+  touchIdx();
+}
+function moveDialog(recs){
+  if(!recs.length)return;
+  const here=recs[0].path;
+  const items=allFolders().map(p=>({
+    icon:"folder",
+    label:(p==="/"?"My Vault":p.replace(/^\//,"").replace(/\//g," › "))+(p===here?"  ·  current":""),
+    act:()=>{
+      recs.forEach(r=>{const f=idx.files.find(x=>x.id===r.id);if(f)f.path=p});
+      sel.clear();touchIdx();
+      toast(`Moved ${recs.length} item${recs.length===1?"":"s"} to ${p==="/"?"My Vault":p.split("/").pop()}.`);
+    }
+  }));
+  const b=$("moveSel").getBoundingClientRect();
+  openMenu(b.left||120,(b.bottom||120)+6,items);
+}
+function toggleStar(recs){
+  if(!recs.length)return;
+  const on=!recs.every(r=>r.star);
+  recs.forEach(r=>{const f=idx.files.find(x=>x.id===r.id);if(f)f.star=on});
+  touchIdx();
+}
+async function confirmForever(recs){
+  if(!recs.length)return;
+  if(!confirm(`Delete ${recs.length} item${recs.length===1?"":"s"} for good?\n\nThis removes them from Saved Messages and cannot be undone.`))return;
+  await deleteRecords(recs);
+}
+$("emptyTrash").onclick=()=>confirmForever(trashed());
+
+/* ------------------------------- details ------------------------------ */
+function closeDetails(){$("details").classList.remove("open")}
+$("dClose").onclick=closeDetails;
+function showDetails(rec){
+  const k=kindOf(rec);
+  $("dTitle").textContent=rec.name;
+  $("dBody").innerHTML=`
+    <div class="dprev">${rec.thumb?`<img src="data:image/jpeg;base64,${esc(rec.thumb)}" alt="">`:plainIco(k,"")}</div>
+    <div class="dacts">
+      ${CAN_PREVIEW[k]?`<button data-a="view">Preview</button>`:""}
+      <button data-a="get">Download</button>
+      <button data-a="star">${rec.star?"Remove star":"Add star"}</button>
+      <button data-a="move">Move</button>
+      <button data-a="rename">Rename</button>
+      <button data-a="trash" class="danger">Trash</button>
+    </div>
+    <div>
+      <div class="drow"><span class="k">Type</span><span class="v">${esc(rec.mime||k)}</span></div>
+      <div class="drow"><span class="k">Size</span><span class="v">${fmt(rec.size)}</span></div>
+      <div class="drow"><span class="k">Folder</span><span class="v">${esc(rec.path==="/"?"My Vault":rec.path)}</span></div>
+      <div class="drow"><span class="k">Added</span><span class="v">${new Date(rec.createdAt).toLocaleString()}</span></div>
+      <div class="drow"><span class="k">Starred</span><span class="v">${rec.star?"Yes":"No"}</span></div>
+      <div class="drow"><span class="k">Message</span><span class="v">${esc(String(rec.messageId||"—"))}</span></div>
+    </div>`;
+  $("dBody").querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.a;
+    if(a==="view")openPreview(rec);
+    if(a==="get")queueDownload(rec);
+    if(a==="star"){toggleStar([rec]);showDetails(idx.files.find(f=>f.id===rec.id)||rec)}
+    if(a==="move")moveDialog([rec]);
+    if(a==="rename"){renameRecord(rec);closeDetails()}
+    if(a==="trash"){trashRecords([rec]);closeDetails()}
+  });
+  $("details").classList.add("open");
+}
+
+/* -------------------------------- theme ------------------------------- */
+function applyTheme(){
+  const t=ui.theme||"system";
+  if(t==="system")document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme",t);
+  $("themeBtn").innerHTML=plainIco(t==="system"?"auto":t==="dark"?"theme":"sun");
+  $("themeBtn").title=t==="system"?"Theme: match system":t==="dark"?"Theme: dark":"Theme: light";
+}
+$("themeBtn").onclick=()=>{
+  ui.theme={system:"light",light:"dark",dark:"system"}[ui.theme||"system"];
+  lsSet(UI_LS,ui);applyTheme();
+};
+applyTheme();
 
 /* ============================= file input ============================= */
 $("fileInput").onchange=(e)=>{
@@ -1401,11 +1763,27 @@ $("fileInput").onchange=(e)=>{
   files.forEach(f=>f.size===0?toast(`"${f.name}" is empty.`):queueUpload(f,dest));
 };
 let dragDepth=0;
-window.addEventListener("dragenter",e=>{e.preventDefault();dragDepth++});
+const dragHasFiles=(e)=>!!(e.dataTransfer&&[...(e.dataTransfer.types||[])].includes("Files"));
+function showDrop(on){
+  $("dropzone").hidden=!on;
+  if(on){
+    const dest=navView==="mine"?cwd:"/";
+    $("dropWhere").textContent="to "+(dest==="/"?"My Vault":dest.split("/").pop());
+  }
+}
+window.addEventListener("dragenter",e=>{
+  e.preventDefault();
+  if($("scrVault").hidden||!dragHasFiles(e))return;
+  dragDepth++;showDrop(true);
+});
 window.addEventListener("dragover",e=>e.preventDefault());
-window.addEventListener("dragleave",()=>{dragDepth=Math.max(0,dragDepth-1)});
+window.addEventListener("dragleave",e=>{
+  if(e.relatedTarget)return;            // moving between children, not leaving the window
+  dragDepth=Math.max(0,dragDepth-1);
+  if(!dragDepth)showDrop(false);
+});
 window.addEventListener("drop",e=>{
-  e.preventDefault();dragDepth=0;
+  e.preventDefault();dragDepth=0;showDrop(false);
   if($("scrVault").hidden)return;
   const dest=navView==="mine"?cwd:"/";
   [...(e.dataTransfer?e.dataTransfer.files:[])].forEach(f=>{if(f.size)queueUpload(f,dest)});
@@ -1423,9 +1801,10 @@ boot();
 window.__vault={
   state:()=>({idx,cwd,navView,query,mode:ui.mode,sort:ui.sort,sel:[...sel],authState,savedChatId,idxMessageId,queued:queue.length,running,
     pv:{open:!$("pv").hidden,name:$("pvName").textContent,count:pvList.length,i:pvIdx}}),
-  setCwd(p){cwd=p;navView="mine";sel.clear();render()},
+  setCwd(p){go({cwd:p})},
   upload:queueUpload,download:queueDownload,openPreview,closePreview,pvStep,
-  saveIndex,loadIndex,render,createFolder,
+  saveIndex,loadIndex,render,createFolder,showDetails,fileMenu,
+  trash:trashRecords,restore:restoreRecords,star:toggleStar,move:moveDialog,rename:renameRecord,
   setBigPreview(n){BIG_PREVIEW=n},
   setStallMs(n){STALL_MS=n},
   pull:pullFile,
