@@ -1047,6 +1047,78 @@ function tRow(name,dir,kind){
 }
 $("tClear").onclick=()=>{[...$("tbody").children].forEach(c=>{if(c.dataset.done||c.classList.contains("err"))c.remove()});tHead()};
 
+/* ============================= thumbnails =============================
+   Telegram does not reliably produce a thumbnail for a document sent with
+   disable_content_type_detection:true, so we make our own in the browser.
+   Costs nothing from GitHub — GitHub only ever serves this app's 8 files.
+     tiny  -> base64 in the index, so grids paint with zero extra requests
+     big   -> travels with the message as inputThumbnail (JPEG, <200 KB),
+              so any other device can show a crisp thumb without the file
+   ===================================================================== */
+const toBlobJ=(c,q)=>new Promise(r=>c.toBlob(r,"image/jpeg",q));
+const toB64=(b)=>new Promise((res,rej)=>{const f=new FileReader();
+  f.onload=()=>res(String(f.result).split(",")[1]);f.onerror=rej;f.readAsDataURL(b)});
+function drawScaled(src,w,h,max,){
+  const s=Math.min(max/w,max/h,1);
+  const cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
+  const c=document.createElement("canvas");c.width=cw;c.height=ch;
+  c.getContext("2d",{alpha:false}).drawImage(src,0,0,cw,ch);
+  return {canvas:c,w:cw,h:ch};
+}
+function once(el,ev,ms){
+  return new Promise((res,rej)=>{
+    const to=setTimeout(()=>{cleanup();rej(new Error(ev+" timed out"))},ms);
+    const ok=()=>{cleanup();res()},bad=()=>{cleanup();rej(new Error(ev+" failed"))};
+    function cleanup(){clearTimeout(to);el.removeEventListener(ev,ok);el.removeEventListener("error",bad)}
+    el.addEventListener(ev,ok,{once:true});el.addEventListener("error",bad,{once:true});
+  });
+}
+async function frameSource(file,kind){
+  if(kind==="image"){
+    const bmp=await createImageBitmap(file);
+    return {src:bmp,w:bmp.width,h:bmp.height,done:()=>{try{bmp.close&&bmp.close()}catch(_){}}};
+  }
+  const url=URL.createObjectURL(file);
+  const v=document.createElement("video");
+  v.muted=true;v.playsInline=true;v.preload="metadata";v.src=url;
+  const done=()=>{try{v.removeAttribute("src");v.load()}catch(_){};URL.revokeObjectURL(url)};
+  try{
+    await once(v,"loadedmetadata",9000);
+    const t=Math.min(1,(isFinite(v.duration)&&v.duration>0?v.duration:4)/4);
+    const seeked=once(v,"seeked",9000);
+    v.currentTime=t;
+    await seeked;
+    return {src:v,w:v.videoWidth,h:v.videoHeight,done};
+  }catch(e){ done(); throw e; }
+}
+async function makeThumbs(file,kind){
+  if(kind!=="image"&&kind!=="video")return null;
+  let s=null;
+  try{
+    s=await frameSource(file,kind);
+    if(!s.w||!s.h)throw new Error("no dimensions");
+    const big=drawScaled(s.src,s.w,s.h,320);
+    const bigBlob=await toBlobJ(big.canvas,0.72);
+    const tiny=drawScaled(s.src,s.w,s.h,64);
+    const tinyBlob=await toBlobJ(tiny.canvas,0.45);
+    const b64=tinyBlob?await toB64(tinyBlob):null;
+    return {b64:(b64&&b64.length<THUMB_CAP)?b64:null,
+            big:(bigBlob&&bigBlob.size<200*1024)?bigBlob:null,w:big.w,h:big.h};
+  }catch(_){ return null; }
+  finally{ if(s&&s.done)s.done(); }
+}
+// Files uploaded before this existed get a thumbnail the first time you open
+// them — the bytes are already in hand, so it costs nothing extra.
+async function backfillThumb(rec,blob){
+  try{
+    if(rec.thumb)return;
+    const th=await makeThumbs(new File([blob],rec.name,{type:rec.mime||""}),kindOf(rec));
+    if(!th||!th.b64)return;
+    const f=idx.files.find(x=>x.id===rec.id);
+    if(f&&!f.thumb){f.thumb=th.b64;touchIdx()}
+  }catch(_){}
+}
+
 /* =============================== upload =============================== */
 function queueUpload(file,path){
   const rec0={name:file.name,mime:file.type||"application/octet-stream"};
@@ -1054,11 +1126,15 @@ function queueUpload(file,path){
   enqueue(async()=>{
     row.set(0,"Uploading…");
     try{
-      const provisional=await client.send({"@type":"sendMessage",chat_id:savedChatId,input_message_content:{
+      const th=await makeThumbs(file,kindOf(rec0));
+      const content={
         "@type":"inputMessageDocument",
         document:{"@type":"inputFileBlob",name:file.name,data:file},
         disable_content_type_detection:true,
-        caption:{"@type":"formattedText",entities:[],text:`${file.name}\n${fmt(file.size)}${path!=="/"?"\n"+path:""}`}}});
+        caption:{"@type":"formattedText",entities:[],text:`${file.name}\n${fmt(file.size)}${path!=="/"?"\n"+path:""}`}};
+      if(th&&th.big)content.thumbnail={"@type":"inputThumbnail",
+        thumbnail:{"@type":"inputFileBlob",name:"thumb.jpg",data:th.big},width:th.w,height:th.h};
+      const provisional=await client.send({"@type":"sendMessage",chat_id:savedChatId,input_message_content:content});
       const d0=docOf(provisional);
       const localId=d0&&d0.document&&d0.document.id;
       if(localId!=null)watchFile(localId,f=>{
@@ -1070,9 +1146,11 @@ function queueUpload(file,path){
       const doc=docOf(final);
       if(!doc||!doc.document||!doc.document.remote||!doc.document.remote.id)
         throw new Error("Telegram stored the file but returned no reference.");
-      let thumb=null;
-      const mt=doc.minithumbnail;
-      if(mt&&typeof mt.data==="string"&&mt.data.length<THUMB_CAP)thumb=mt.data;
+      let thumb=(th&&th.b64)||null;
+      if(!thumb){
+        const mt=doc.minithumbnail;
+        if(mt&&typeof mt.data==="string"&&mt.data.length<THUMB_CAP)thumb=mt.data;
+      }
       idx.files.push({id:uid(),name:file.name,path,size:doc.document.size||file.size,
         mime:file.type||"application/octet-stream",remoteId:doc.document.remote.id,
         messageId:final.id,createdAt:Date.now(),thumb});
@@ -1300,8 +1378,10 @@ async function showPreview(){
       },async b=>parts.push(b),{onStart:id=>{if(pvRun===run)pvFileId=id}});
       if(pvRun!==run||$("pv").hidden)return;
       pvFileId=null;
-      url=URL.createObjectURL(new Blob(parts,{type:rec.mime||""}));
+      const blob=new Blob(parts,{type:rec.mime||""});
+      url=URL.createObjectURL(blob);
       pvPut(rec.id,url);
+      backfillThumb(rec,blob);
     }catch(e){
       if(pvRun!==run||$("pv").hidden)return;
       pvFileId=null;
