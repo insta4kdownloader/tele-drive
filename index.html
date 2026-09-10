@@ -681,7 +681,8 @@ nav{display:flex;flex-direction:column;gap:2px}
    tdweb.js, both workers and the .wasm must stay beside index.html:
    webpack publicPath is "", so paths resolve against the document. */
 
-const KEYS_LS="vault.keys.v1", IDX_LS="vault.idxcache.v1", UI_LS="vault.ui.v1";
+const KEYS_LS="vault.keys.v1", IDX_LS="vault.idxcache.v1", UI_LS="vault.ui.v1", MSG_LS="vault.idxmsg.v1";
+const IDX_CACHE="vault-index-cache", IDX_KEY="/__vault_index";
 const IDX_NAME="vault-index.json";
 const READ_PART=32*1024*1024;
 let BIG_PREVIEW=300*1024*1024;
@@ -758,7 +759,27 @@ let keys=lsGet(KEYS_LS);
 const ui=Object.assign({mode:"list",sort:"new",rev:false,theme:"system"},lsGet(UI_LS)||{});
 let client=null,me=null,savedChatId=null;
 let idx={v:2,updatedAt:0,folders:[],files:[]};
-let idxMessageId=null,idxDirty=false,idxTimer=null;
+let idxMessageId=null,idxDirty=false,idxTimer=null,idxFromCache=false;
+async function idxCachePut(o){
+  try{
+    const c=await caches.open(IDX_CACHE);
+    await c.put(IDX_KEY,new Response(JSON.stringify(o),{headers:{"Content-Type":"application/json"}}));
+    return;
+  }catch(_){}
+  lsSet(IDX_LS,o);
+}
+async function idxCacheGet(){
+  try{
+    const c=await caches.open(IDX_CACHE);
+    const r=await c.match(IDX_KEY);
+    if(r)return await r.json();
+  }catch(_){}
+  return lsGet(IDX_LS);
+}
+async function idxCacheClear(){
+  try{ await caches.delete(IDX_CACHE); }catch(_){}
+  localStorage.removeItem(IDX_LS); localStorage.removeItem(MSG_LS);
+}
 let cwd="/",navView="mine",query="";
 const sel=new Set();
 let authState="",connState="";
@@ -841,8 +862,8 @@ async function onReady(){
   // keep TDLib's on-device media cache bounded, since small files are now kept
   client.send({"@type":"optimizeStorage",size:512*1024*1024,ttl:0,count:0,immunity_delay:0,
     file_types:[],chat_ids:[],exclude_chat_ids:[],return_deleted_file_statistics:false,chat_limit:0}).catch(()=>{});
-  const cached=lsGet(IDX_LS);
-  if(cached&&Array.isArray(cached.files))idx=normalize(cached);
+  const cached=await idxCacheGet();
+  if(cached&&Array.isArray(cached.files)){idx=normalize(cached);idxFromCache=true;idxMessageId=lsGet(MSG_LS)||null}
   screen("scrVault");render();
   try{ await loadIndex(); }catch(e){ toast("Couldn't read the index from Telegram: "+errText(e)); }
 }
@@ -895,7 +916,8 @@ $("passBtn").onclick=async()=>{
 $("logoutBtn").onclick=async()=>{
   if(!confirm("Sign out of this browser?\n\nYour files and index stay in Saved Messages."))return;
   try{ await client.send({"@type":"logOut"}); }catch(_){}
-  localStorage.removeItem(IDX_LS);
+  await idxCacheClear();
+  idxFromCache=false;idxMessageId=null;
   me=null;paintMe();screen("scrPhone");
 };
 
@@ -1091,7 +1113,7 @@ const live=()=>idx.files.filter(f=>!f.trashed);
 const trashed=()=>idx.files.filter(f=>f.trashed);
 const totalBytes=()=>live().reduce((a,f)=>a+(f.size||0),0);
 function touchIdx(){
-  idx.updatedAt=Date.now();idxDirty=true;lsSet(IDX_LS,idx);render();
+  idx.updatedAt=Date.now();idxDirty=true;idxCachePut(idx);render();
   clearTimeout(idxTimer);
   idxTimer=setTimeout(()=>{saveIndex().catch(e=>toast("Couldn't save the index: "+errText(e)))},2500);
 }
@@ -1106,13 +1128,18 @@ async function saveIndex(){
   const prev=idxMessageId;idxMessageId=final.id;
   try{ await client.send({"@type":"pinChatMessage",chat_id:savedChatId,message_id:final.id,disable_notification:true,only_for_self:false}); }catch(_){}
   if(prev&&prev!==final.id){try{ await client.send({"@type":"deleteMessages",chat_id:savedChatId,message_ids:[prev],revoke:true}) }catch(_){}}
-  idxDirty=false;lsSet(IDX_LS,idx);
+  idxDirty=false;lsSet(MSG_LS,idxMessageId);idxCachePut(idx);
 }
 const isIndexMsg=(m)=>{const d=docOf(m);return !!(d&&d.file_name===IDX_NAME)};
 async function loadIndex(){
   let m=null;
   try{
     const chat=await client.send({"@type":"getChat",chat_id:savedChatId});
+    // Nothing has changed since this device last synced, so there is no reason
+    // to pull the index again. This is what a launch costs when idle: nothing.
+    if(chat&&chat.pinned_message_id&&idxFromCache&&chat.pinned_message_id===idxMessageId&&!idxDirty){
+      return;
+    }
     if(chat&&chat.pinned_message_id){
       try{ const pin=await client.send({"@type":"getMessage",chat_id:savedChatId,message_id:chat.pinned_message_id}); if(isIndexMsg(pin))m=pin; }catch(_){}
     }
@@ -1132,7 +1159,7 @@ async function loadIndex(){
   if(!data||!Array.isArray(data.files))throw new Error("The pinned index isn't readable.");
   const remote=normalize(data);
   if(!idxDirty||(remote.updatedAt||0)>=(idx.updatedAt||0))idx=remote;
-  lsSet(IDX_LS,idx);render();
+  idxFromCache=true;lsSet(MSG_LS,idxMessageId);idxCachePut(idx);render();
 }
 
 /* =============================== folders ============================== */
