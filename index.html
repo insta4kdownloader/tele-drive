@@ -952,7 +952,12 @@ async function readOut(fileId,size,sink){
   if(!r||!r.data)throw new Error("TDLib downloaded the file but handed back no data.");
   await sink(r.data);
 }
-const KEEP_LOCAL_UNDER=64*1024*1024;   // keep TDLib's copy of small media so re-opening is instant
+/* Downloaded files are persisted by tdweb into IndexedDB, and TDLib reads
+   every key in that store at startup (InboundFileSystem::load_pids does a
+   getAllKeys). Keeping 64 MB videos there bloated the store and slowed the
+   whole TDLib filesystem, syncfs included. Photos still stay cached so
+   re-opening is instant; anything larger is evicted after reading. */
+const KEEP_LOCAL_UNDER=8*1024*1024;
 let STALL_MS=45000;
 const busy=new Set();                  // remote ids currently being fetched
 
